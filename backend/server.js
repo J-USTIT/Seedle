@@ -78,3 +78,4 @@ app.get("/api/plants/:query", async (req, res) => {
         res.status(500).json({errorMessage: "Failed to fetch plant data."});
     }
 });
+// hi
