@@ -12,6 +12,8 @@ function PlantData({ plant }) {
                 { common_name }
             </h1>
             <div>
+                <img src={ plant.image_url } style={ {aspectRatio: "1/1"} } />
+                { JSON.stringify(plant) }
                 {/* ADD AND DESIGN THE PLANT INFORMATION NECESSARY */}
             </div>
         </>

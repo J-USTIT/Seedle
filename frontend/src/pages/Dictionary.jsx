@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import PlantCard from "../components/PlantCard.jsx"
 import LinkButton from "../components/LinkButton.jsx";
 import useFetch from "../hooks/useFetch.js";
+import Loading from "../components/Loading.jsx";
+import Search from "../components/Search.jsx";
 
 function Dictionary() {
     const [plantsData, setPlantsData] = useState(null);
@@ -32,16 +34,9 @@ function Dictionary() {
                 Dictionary
             </h1>
             <LinkButton to="/home">Home</LinkButton>
-            <form onSubmit={(e)=>{e.preventDefault();}}>
-                <input 
-                    type="text"
-                    onKeyUp={(e)=>{
-                        if(e.key === 'Enter') setQuery(e.target.value);
-                    }}
-                />
-            </form>
+            <Search setQuery={setQuery} />
             { data !== null ? data.data.map((plant) => 
-                <PlantCard key={plant.id} id={plant.id} title={plant.scientific_name} description={plant.common_name} />) : "Loading..."
+                <PlantCard key={plant.id} id={plant.id} title={plant.scientific_name} description={plant.common_name} />) : <Loading />
             }
         </>
     )

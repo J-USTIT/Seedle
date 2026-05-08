@@ -7,6 +7,7 @@ import Dictionary from './pages/Dictionary.jsx'
 import PageNotFound from './pages/PageNotFound.jsx'
 import PlantCollection from './pages/PlantCollection.jsx'
 import PlantInformation from './pages/PlantInformation.jsx'
+import Leaderboards from './pages/Leaderboards.jsx'
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "plant/:id",
     element: <PlantInformation />
+  },
+  {
+    path: "leaderboard",
+    element: <Leaderboards />
   },
   {
     path: "*",
