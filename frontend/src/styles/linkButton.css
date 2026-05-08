@@ -1,0 +1,9 @@
+button {
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+}
+
+button * {
+    text-decoration: none;
+    color: black;
+}

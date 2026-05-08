@@ -1,0 +1,12 @@
+
+.card {
+    /* background-color: gray; */
+    border: 1px solid black; 
+    border-radius: 25px;
+    
+    padding: 1rem 2rem;
+}
+
+.card > .card-title {
+    text-align: center;
+} 

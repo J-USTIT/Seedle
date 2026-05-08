@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+}
