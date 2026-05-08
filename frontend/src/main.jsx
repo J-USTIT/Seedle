@@ -8,6 +8,7 @@ import PageNotFound from './pages/PageNotFound.jsx'
 import PlantCollection from './pages/PlantCollection.jsx'
 import PlantInformation from './pages/PlantInformation.jsx'
 import Leaderboards from './pages/Leaderboards.jsx'
+import DailyGame from './pages/DailyGame.jsx'
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
         element: <App />,
       },
     ]
+  },
+  {
+    path: "daily",
+    element: <DailyGame />,
   },
   {
     path: "dictionary",

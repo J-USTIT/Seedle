@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <h1 className="title">Seedle</h1>
-      <LinkButton to="game">
+      <LinkButton to="daily">
         Play Game
       </LinkButton>      
       <LinkButton to="leaderboard">
