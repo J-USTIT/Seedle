@@ -4,7 +4,8 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import route from "./routes/userRoute.js";
+import userRoute from "./routes/userRoute.js";
+import plantRoute from "./routes/plantRoute.js";
 
 const corsOptions = {
     origin: ["http://localhost:5173"],
@@ -36,50 +37,5 @@ mongoose
 
 
 // SETTING API ROUTES FOR FRONTEND
-app.use("/api", route); 
-
-
-app.get("/api/plant/:id", async (req, res) => {
-    try {
-        const trefleURL = `https://trefle.io/api/v1/plants/${req.params.id}?token=${process.env.TREFLE_TOKEN}`;
-        
-        const response = await fetch(trefleURL);
-        const data = await response.json();
-
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({errorMessage: "Failed to fetch plant data."});
-    }
-});
-
-
-
-
-app.get("/api/plants", async (req, res) => {
-    try {
-        const trefleURL = `https://trefle.io/api/v1/plants?token=${process.env.TREFLE_TOKEN}`;
-
-        const response = await fetch(trefleURL);
-        const data = await response.json();
-
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({errorMessage: "Failed to fetch plant data."});
-    }
-});
-
-app.get("/api/plants/search", async (req, res) => {
-    try {
-        const { q, f, s } = req.query;
-        const trefleURL = `https://trefle.io/api/v1/plants/search?token=${process.env.TREFLE_TOKEN}&q=${q}&order[common_name]=${s}`;
-        console.log(trefleURL);
-
-        const response = await fetch(trefleURL);
-        const data = await response.json();
-
-        res.json(data);
-
-    } catch (error) {
-        res.status(500).json({errorMessage: "Failed to fetch plant data."});
-    }
-});
+app.use("/api", userRoute); 
+app.use("/api", plantRoute); 
