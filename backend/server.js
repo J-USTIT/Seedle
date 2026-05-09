@@ -38,6 +38,7 @@ mongoose
 // SETTING API ROUTES FOR FRONTEND
 app.use("/api", route); 
 
+
 app.get("/api/plant/:id", async (req, res) => {
     try {
         const trefleURL = `https://trefle.io/api/v1/plants/${req.params.id}?token=${process.env.TREFLE_TOKEN}`;
@@ -50,6 +51,9 @@ app.get("/api/plant/:id", async (req, res) => {
         res.status(500).json({errorMessage: "Failed to fetch plant data."});
     }
 });
+
+
+
 
 app.get("/api/plants", async (req, res) => {
     try {
@@ -64,9 +68,10 @@ app.get("/api/plants", async (req, res) => {
     }
 });
 
-app.get("/api/plants/:query", async (req, res) => {
+app.get("/api/plants/search", async (req, res) => {
     try {
-        const trefleURL = `https://trefle.io/api/v1/plants/search?token=${process.env.TREFLE_TOKEN}&q=${req.params.query || ""}`;
+        const { q, f, s } = req.query;
+        const trefleURL = `https://trefle.io/api/v1/plants/search?token=${process.env.TREFLE_TOKEN}&q=${q}&order[common_name]=${s}`;
         console.log(trefleURL);
 
         const response = await fetch(trefleURL);

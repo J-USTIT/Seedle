@@ -4,29 +4,19 @@ import LinkButton from "../components/LinkButton.jsx";
 import useFetch from "../hooks/useFetch.js";
 import Loading from "../components/Loading.jsx";
 import Search from "../components/Search.jsx";
+import Filter from "../components/Filter.jsx";
+import Sorting from "../components/Sorting.jsx";
 
 function Dictionary() {
     const [plantsData, setPlantsData] = useState(null);
     const [query, setQuery] = useState("");
-    // const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState("");
+    const [sorting, setSorting] = useState("asc");
 
-    // useEffect(()=> {
-    //     async function getAllPlants() {
-    //         // DO THIS :query on route then something.params.query on server.js
-    //         console.log(`http://localhost:8001/api/plants/${query}`);
-    //         const response = await fetch(`http://localhost:8001/api/plants/${query}`);
-    //         const json = await response.json();
+    const endpoint = query ? `http://localhost:8001/api/plants/search?q=${query}&f=${filter}&s=${sorting}` : `http://localhost:8001/api/plants`;
+    const [data] = useFetch(endpoint);
 
-    //         setPlantsData(json.data);
-    //         console.log(json.data);
-    //         setLoading(false);
-    //     }
-    //     console.log(query);
-    //     getAllPlants();
-    // }, [query])
-
-    const [data] = useFetch(`http://localhost:8001/api/plants/${query}`);
-    console.log(data);
+    useEffect(()=>{console.log(query, filter, sorting)}, [query, filter, sorting]);
 
     return (
         <>
@@ -34,8 +24,20 @@ function Dictionary() {
                 Dictionary
             </h1>
             <LinkButton to="/home">Home</LinkButton>
-            <Search setQuery={setQuery} />
-            { data !== null ? data.data.map((plant) => 
+            <form onSubmit={ (e) => { e.preventDefault() }}>
+                <Search setQuery={setQuery} />
+                <Filter setFilter={setFilter} >
+                    <option value="test" default>Meow</option>
+                    <option value="green">Green</option>
+                    <option value="banana">Banana</option>
+                </Filter>
+                <Sorting setSorting={setSorting} >
+                    <option value="asc" default>A-Z</option>
+                    <option value="desc">Z-A</option>
+                </Sorting>
+            </form>
+
+            { data !== null ? data.data?.map((plant) => 
                 <PlantCard key={plant.id} id={plant.id} title={plant.scientific_name} description={plant.common_name} />) : <Loading />
             }
         </>
