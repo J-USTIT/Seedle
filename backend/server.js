@@ -6,6 +6,7 @@ import cors from "cors";
 
 import userRoute from "./routes/userRoute.js";
 import plantRoute from "./routes/plantRoute.js";
+import authRoute from "./routes/authRoute.js";
 
 const corsOptions = {
     origin: ["http://localhost:5173"],
@@ -39,3 +40,4 @@ mongoose
 // SETTING API ROUTES FOR FRONTEND
 app.use("/api", userRoute); 
 app.use("/api", plantRoute); 
+app.use("/api", authRoute); 
