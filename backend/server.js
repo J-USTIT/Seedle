@@ -3,10 +3,13 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
+import cron from "node-cron";
 
 import userRoute from "./routes/userRoute.js";
 import plantRoute from "./routes/plantRoute.js";
 import authRoute from "./routes/authRoute.js";
+import gameRoundRoute from "./routes/gameRoute.js";
+import { autoPopulateGameRounds } from "./controllers/gameRoundController.js";
 
 const corsOptions = {
     origin: ["http://localhost:5173"],
@@ -41,3 +44,13 @@ mongoose
 app.use("/api", userRoute); 
 app.use("/api", plantRoute); 
 app.use("/api", authRoute); 
+app.use("/api", gameRoundRoute); 
+
+// TRIGGERS CREATION OF NEW GAMEROUNDS EVERY MIDNIGHT/DAY
+cron.schedule('0 0 * * *', () => {
+    console.log("Auto-populating game rounds...");
+    autoPopulateGameRounds(); 
+});
+
+console.log("Auto-populating game rounds...");
+autoPopulateGameRounds(); 

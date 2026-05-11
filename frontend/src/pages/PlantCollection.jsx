@@ -20,7 +20,7 @@ function PlantCollection() {
     const endpoint = query ? `http://localhost:8001/api/plants/search?q=${query}&f=${filter}&s=${sorting}` : `http://localhost:8001/api/plants`;
     const [data] = useFetch(endpoint);
 
-    useEffect(()=>{console.log(query, filter, sorting)}, [query, filter, sorting]);
+    // useEffect(()=>{console.log(query, filter, sorting)}, [query, filter, sorting]);
 
     return (
         <div>

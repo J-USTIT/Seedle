@@ -7,8 +7,6 @@ function Leaderboards() {
     // CHANGE THIS TO RETRIEVING USERCOLLECTION DATA INSTEAD
     const [data] = useFetch("http://localhost:8001/api/users");
 
-    console.log(data?.userData[1].name)
-
     return (
         <div>
             <h1>Leaderboards</h1>

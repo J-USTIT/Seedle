@@ -19,11 +19,14 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "argon2id": "^1.0.1",
+    "axios": "^1.16.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mongoose": "^9.6.1"
+    "mongoose": "^9.6.1",
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

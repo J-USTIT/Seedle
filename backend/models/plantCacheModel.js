@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const plantCache = mongoose.Schema({
+const plantCacheSchema = mongoose.Schema({
     trefleId: {
         type: Number,
         required: true,
@@ -20,7 +20,7 @@ const plantCache = mongoose.Schema({
         required: true
     },
     family: {
-        type: String
+        type: mongoose.Schema.Types.Mixed
     },
     imageUrl: {
         type: String
@@ -35,4 +35,4 @@ const plantCache = mongoose.Schema({
     }
 });
 
-export default mongoose.model('PlantCache', plantCacheSchema);
+export default mongoose.model('PlantCaches', plantCacheSchema);

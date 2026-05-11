@@ -6,6 +6,10 @@ const gameRoundSchema = new mongoose.Schema({
         ref: 'PlantCache',
         required: true
     },
+    plantCommonName: {
+        type: String,
+        required: true
+    },
     playDate: {
         type: Date,
         required: true,

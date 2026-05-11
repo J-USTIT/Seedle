@@ -15,3 +15,23 @@ export const register = async (req, res) => {
         res.status(500).json({errorMessage: error.message});
     }
 }
+
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        
+        const userExists = await Users.findOne({ email });
+        if (userExists && userExists.password === password) {
+
+            // HASHING ALGORITHM
+            console.log("Matches!");
+            res.status(200).json({message: "Successful"});
+        }
+        else {
+            res.status(401).json({auth: "Invalid credentials."});
+        }
+
+    } catch (error) {
+        res.status(500).json({errorMessage: error.message});
+    }
+}

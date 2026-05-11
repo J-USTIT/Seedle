@@ -18,7 +18,7 @@ function Accounts() {
                 </thead>
                 <tbody>
                     { data?.userData?.map((user)=>
-                        <tr><td>{user.username}</td><td>{user.email}</td><td>{user.role}</td></tr>
+                        <tr key={user.id}><td>{user.username}</td><td>{user.email}</td><td>{user.role}</td></tr>
                     ) }
                 </tbody>
             </table>

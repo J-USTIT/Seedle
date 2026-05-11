@@ -76,17 +76,17 @@ function Register() {
             <h1>Register</h1>
             <form id="register" onSubmit={onRegisterFormSubmit}>
                 <div>
-                    <label for="username">Username:<span>*</span> </label>
+                    <label htmlFor="username">Username:<span>*</span> </label>
                     <input type="text" id="username" minLength={3} maxLength={16} required />
                 </div>
                 <div>
-                    <label for="email">Email: <span>*</span> </label>
+                    <label htmlFor="email">Email: <span>*</span> </label>
                     <input type="email" id="email" minLength={10} maxLength={80} required />
                 </div>
-                    <label for="password">Password:<span>*</span> </label>
+                    <label htmlFor="password">Password:<span>*</span> </label>
                     <input type="password" id="password" minLength={8} maxLength={32} required />
                 <div>
-                    <label for="confirmPassword">Confirm Password:<span>*</span> </label>
+                    <label htmlFor="confirmPassword">Confirm Password:<span>*</span> </label>
                     <input type="password" id="confirmPassword" minLength={8} maxLength={32} required />
                 </div>
                 <div>
