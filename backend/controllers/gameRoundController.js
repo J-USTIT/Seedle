@@ -2,19 +2,35 @@ import GameRounds from '../models/gameRoundModel.js';
 import PlantCaches from '../models/plantCacheModel.js';
 import { getOrCreatePlantCache } from './plantCacheController.js';
 import { getRandomTrefleId, getPlantByIDService } from '../services/trefleServices.js';
+import { generateHints } from '../services/gameServices.js';
 
 // AUTOMATIC POPULATION OF GAME ROUNDS
 export const autoPopulateGameRounds = async () => {
     try {
         const results = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
         for(let i = 0; i < 7; i++){
             const date = new Date();
             date.setHours(0, 0, 0, 0);
             date.setDate(date.getDate() + i);
 
+            const currentRound = await GameRounds.findOne({
+                isCurrent: true
+            });
+
+            if (currentRound && currentRound?.playDate.getTime() !== today.getTime()) {
+                console.log("CHANGED OLD");
+                const updateOldCurrentRound = await GameRounds.findByIdAndUpdate(currentRound.id, {isCurrent: false}, { new: true });
+            }
+
             const exists = await GameRounds.findOne({ playDate: date });
             if(exists) {
+                if (exists.isCurrent == false && exists.playDate.getTime() == today.getTime()){
+                    const updateNewCurrentRound = await GameRounds.findByIdAndUpdate(exists.id, {isCurrent: true}, {new: true});
+                }
+                
                 results.push({ date, status: 'Round already exists.'});
                 continue;
             };
@@ -107,15 +123,16 @@ export const checkGuess = async (req, res) => {
 
         // IF MATCH THEN RETURN SUCCESS
 
-        console.log(plantToday);
-        console.log(guessedPlant.data.id);
+        // console.log(plantToday);
+        // console.log(guessedPlant.data.id);
 
+        const generatedHints = generateHints(plantToday, guessedPlant);
         if(plantToday.trefleId === guessedPlant.data.id){
-            res.status(200).json({correct: true});
+            res.status(200).json({correct: true, hints: generatedHints});
+            // RUN FUNCTION TO RETRIEVE LOGGED USER AND CREATE NEW USERCOLLECTION
         }
         else{
-            res.status(200).json({correct: false});
-            console.log("NOT SAME");
+            res.status(200).json({correct: false, hints: generatedHints});
         }
         // RETURN EACH HINT (RED, GREEN, OR YELLOW)
 

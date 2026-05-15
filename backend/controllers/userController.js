@@ -35,7 +35,7 @@ export const getAllUsers = async (req, res) => {
 //         res.status(500).json({errorMessage: error.message});
 //     }
 // }
-
+    
 // export const getUserById = async (req, res) => {
 //     try {
 //         const id = req.params.id;
@@ -60,7 +60,7 @@ export const getAllUsers = async (req, res) => {
 //             new: true,
 //         });
 //         res.status(200).json(updatedData);
-//     } catch (error) {
+//     } catch (error) {    
 //         res.status(500).json({errorMessage: error.message});
 //     }
 // }

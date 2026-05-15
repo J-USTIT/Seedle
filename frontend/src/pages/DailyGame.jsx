@@ -30,7 +30,8 @@ function DailyGame() {
             // const plantGuess = plantList.data.find(plant => plant.id === guess);
             // console.log("Plant Guess:", plantGuess);
 
-            const newGuess = { id: guesses.length, value: plantGuess.data, correct: response.correct }
+            const newGuess = { id: guesses.length, value: plantGuess.data, correct: response.correct , hints: response.hints }
+            console.log(newGuess);
             setGuesses(prev => [...prev, newGuess]);
             setResult(response);
 
@@ -47,23 +48,31 @@ function DailyGame() {
         objectFit:"cover" 
     };
 
+    const tempIncorrectGuessStyle = {
+        backgroundColor: "red",
+    }
+
+    const tempCorrectGuessStyle = {
+        backgroundColor: "green",
+    }
+
+    if(result?.correct){
+        alert("CONGRATS YOU WON!!! DO REPLACE THIS WITH A PROPER DIALOG :)");
+    }
+
     return (
         <>
             <h1>Daily Game</h1>
 
-            <form id="guessForm" onSubmit={onSubmit}>
-                {/* THIS WILL TURN INTO A SEARCH */}
-
-                {/* DISABLES SUBMIT WHEN FULL */}
-                <input type="text" value={query} onChange={(e)=> setQuery(e.target.value)} />
-                <select id="guess" name="guess" disabled={!plantList}>
+            <form id="guessForm" onSubmit={onSubmit} >
+                <input type="text" value={query} onChange={(e)=> setQuery(e.target.value)} disabled={ result?.correct } />
+                <select id="guess" name="guess" disabled={!plantList || result?.correct}>
                     {/* ADD FILTER BEFORE MAPPING TO REMOVE GUESSED PLANTS */}
                     { plantList ? plantList?.data?.map((plant) => 
                         <option key={plant.id} value={plant.id}>{plant.common_name}</option>
                     ) : <option>Loading...</option>} 
                 </select>
-                {/* ADD SELECT AND OPTION, REQUIRES TO BE SELECTED */}
-                <input type="submit" value="Submit" />
+                <input type="submit" value="Submit" disabled={result?.correct} />
             </form>
 
             <table>
@@ -73,33 +82,37 @@ function DailyGame() {
                         <th>Common Name</th>
                         <th>Family</th>
                         <th>Genus</th>
-                        <th>Ligneous Type</th>
-                        <th>Native</th>
+                        <th>Edible</th>
+                        <th>Vegetable</th>
                         <th>Observations</th>
                         <th>Year</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
-                        guesses.length === 0 ? <tr><td colSpan={5}>Enter a guess</td></tr> : guesses.map(({value: plant})=>
+                        guesses.length === 0 ? <tr><td colSpan={5}>Enter a guess</td></tr> : guesses.map(({value: plant, hints})=>
                             <tr>
                                 <td>
                                     <img src={plant.image_url} style={tempStyle}/>
                                 </td>
-                                <td>
+                                <td style={hints[0] ? tempCorrectGuessStyle : tempIncorrectGuessStyle }>
                                     {plant.common_name}
                                 </td>
-                                <td>
+                                <td style={hints[1] ? tempCorrectGuessStyle : tempIncorrectGuessStyle }>
                                     {plant.family}
+                                    {/* {hints[1]} */}
                                 </td>
-                                <td>
+                                <td style={hints[2] ? tempCorrectGuessStyle : tempIncorrectGuessStyle }>
                                     {plant.genus}
+                                    {/* {hints[2]} */}
                                 </td>
-                                <td>
+                                <td style={hints[3] ? tempCorrectGuessStyle : tempIncorrectGuessStyle }>
                                     {plant.edible?.toString()}
+                                    {/* {hints[3]} */}
                                 </td>
-                                <td>
+                                <td style={hints[4] ? tempCorrectGuessStyle : tempIncorrectGuessStyle }>
                                     {plant.vegetable?.toString()}
+                                    {/* {hints[4]} */}
                                 </td>
                                 <td>
                                     {plant.observations}
@@ -112,6 +125,8 @@ function DailyGame() {
                     }
                 </tbody>
             </table>
+
+            {/* WIN COMPONENT */}
         </>
     )
 }

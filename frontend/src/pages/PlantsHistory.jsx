@@ -8,16 +8,26 @@ function PlantsHistory() {
     const [allRounds] = useFetch("http://localhost:8001/api/rounds");
     const [sevenRounds] = useFetch("http://localhost:8001/api/7rounds");
 
+    const onSubmit = (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+
+        const query = form.query.value;
+    }
+
     const toggleShow = () => {
         setShowPast((prev) => !prev)
     }
 
-    // console.log(allRounds);
-    console.log(sevenRounds);
-
     return (
         <div>
             <h1>Plants History</h1>
+
+            <form onSubmit={onSubmit}>
+                <input type="text" name="query" id="query" />
+                <input type="submit" value="Submit" />
+            </form>
 
             <button onClick={toggleShow}>
                 {showPast ? "Hide Past Rounds" : "Show All Rounds"}
