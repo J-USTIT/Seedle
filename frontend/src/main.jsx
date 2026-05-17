@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router'
-import { AuthProvider } from './context/AuthContext.js'
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 import App from './App.jsx'
 import React from 'react'
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
       },
       {
         path: "daily",
-        element: <DailyGame />,
+        element: <ProtectedRoute element={<DailyGame />} />,
       },
       {
         path: "dictionary",
@@ -43,11 +44,11 @@ const router = createBrowserRouter([
       },
       {
         path: "collections",
-        element: <PlantCollection />
+        element: <ProtectedRoute element={<PlantCollection />} />
       },
       {
         path: "plant/:id",
-        element: <PlantInformation />
+        element: <ProtectedRoute element={<PlantInformation />} />
       },
       {
         path: "leaderboard",

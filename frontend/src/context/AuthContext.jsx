@@ -1,24 +1,15 @@
 import { createContext, useState, useContext, useEffect} from 'react';
 
-/**
- * AuthContext - Global authentication state
- * 
- * Provides:
- * - user: current logged user data
- * - token : JWT for API requests
- * - isAuthenticated: bool for checking if user is logged in 
- * - login: handle login
- * - logout: handle logout, clear auth data
- * - loading: bool to show loading state
- */
-
+// AuthContext provides auth state and actions for the app.
+// - user: logged-in user data
+// - token: JWT for API calls
+// - isAuthenticated: login state
+// - login: save auth data
+// - logout: clear auth data
+// - loading: auth initialization state
 const AuthContext = createContext();
 
-/**
- * AuthProvider
- * Wraps app and provides auth state and functions to all child components
- * Very useful :)
- */
+// AuthProvider wraps the app and manages auth state.
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -26,15 +17,10 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    /**
-     * On app load, checks localStorage for existing token and user data
-     * Yes: Load into state (logs in)
-     * No: User will log in
-     */
-
+        // On load, restore auth state from sessionStorage if available.
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
+        const storedToken = sessionStorage.getItem('token');
+        const storedUser = sessionStorage.getItem('user');
 
         if (storedToken && storedUser) {
             setToken(storedToken);
@@ -44,13 +30,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    /**
-     * Login Function
-     * @param {Object} authData login response
-     * @param {string} authData.token JWT from backend
-     * @param {Object} authData.user User object from backend
-     */
-
+        // Login and store token/user in sessionStorage.
     const login = (authData) => {
         const { token, userId, username, email } = authData;
 
@@ -64,22 +44,22 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
         setIsAuthenticated(true);
 
-        // Store in localStorage for persistence
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
+        // Store in sessionStorage for persistence within this tab
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('user', JSON.stringify(userData));
 
         console.log("User logged in:", userData);
     };
 
-    // Logout Function
+    // Logout and clear sessionStorage.
     const logout = () => {
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
 
         // Clearing storage
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
 
         console.log("User logged out");
     };
@@ -100,10 +80,7 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-/**
- * This is very useful
- * useAuth: for accessing any component to access auth context
- */
+// Hook for accessing auth context from components.
 
 export const useAuth = () => {
     const context = useContext(AuthContext);

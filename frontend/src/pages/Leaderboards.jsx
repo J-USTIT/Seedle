@@ -5,7 +5,7 @@ import useFetch from "../hooks/useFetch"
 function Leaderboards() {
 
     // CHANGE THIS TO RETRIEVING USERCOLLECTION DATA INSTEAD
-    const [data] = useFetch("http://localhost:8001/api/users");
+    const [data] = useFetch("http://localhost:8000/api/users");
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] p-6 font-sans">

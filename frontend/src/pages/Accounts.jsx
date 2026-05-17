@@ -2,7 +2,7 @@ import useFetch from "../hooks/useFetch"
 
 function Accounts() {
 
-    const [data] = useFetch("http://localhost:8001/api/users");
+    const [data] = useFetch("http://localhost:8000/api/users");
     
     return (
         <div>

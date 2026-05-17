@@ -1,6 +1,6 @@
 import Users from "../models/userModel.js";
 import { hashPassword, comparePassword } from "../utils/passwordUtils.js";
-import { generateToken } from "../utils/jwtUtiils.js";
+import { generateToken } from "../utils/jwtUtils.js";
 
 /**
  * Register controller

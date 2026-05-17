@@ -1,26 +1,17 @@
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 
-/**
- * Axios Instance with JWT Token Interceptor
- * 
- * Automatically adds JWT token to every API request
- * Format: Authorization: Bearer <token>
- */
-
+// Axios instance for API calls.
+// Automatically adds the JWT token from sessionStorage.
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8001/api'
+    baseURL: 'http://localhost:8000/api'
 });
 
-/**
- * Request Interceptor
- * Before sending request: Add token to Authorization header
- */
+// Add auth header before each request.
 
 axiosInstance.interceptors.request.use(
     (config) => {
 
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -31,13 +22,7 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-/**
- * Response Interceptor
- * If response is 401 (Unauthorized):
- * - Token is invalid or expired
- * - You have to clear localStorage and redirect to login
- */
-
+// Handle 401 responses by clearing session storage and redirecting to login.
 axiosInstance.interceptors.response.use(
     (response) => {
         return response;
@@ -45,8 +30,8 @@ axiosInstance.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
 
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
 
             window.location.href = '/login';
             console.warn('Token expired, redirecting to login');
