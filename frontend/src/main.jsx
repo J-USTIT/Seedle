@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router'
 
 import App from './App.jsx'
-import Dictionary from './pages/Dictionary.jsx' 
+import Dictionary from './pages/Dictionary.jsx'
 import PageNotFound from './pages/PageNotFound.jsx'
 import PlantCollection from './pages/PlantCollection.jsx'
 import PlantInformation from './pages/PlantInformation.jsx'
@@ -15,6 +15,7 @@ import Admin from './pages/Admin.jsx'
 import Accounts from './pages/Accounts.jsx'
 import Home from './pages/Home.jsx'
 import PlantsHistory from './pages/PlantsHistory.jsx'
+import './App.css'
 
 const router = createBrowserRouter([
   {
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="home" redirect/>,
+        element: <Navigate to="home" redirect />,
       },
       {
         path: "home",
@@ -65,7 +66,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="accounts" replace/>,
+        element: <Navigate to="accounts" replace />,
       },
       {
         path: "accounts",
