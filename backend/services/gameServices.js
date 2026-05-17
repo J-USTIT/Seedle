@@ -10,13 +10,30 @@ export const generateHints = (plantToday, plantGuess) => {
         "genus",
         "edible",
         "vegetable",
+        "observations",
+        "year"
     ];
 
     console.log("Common Name of Today's Plant:", plantToday.trefleData.common_name)
 
     exactMatch.forEach((field)=>{
-        console.log(plantToday.trefleData[field], plantGuess.data[field], plantToday.trefleData[field] == plantGuess.data[field]);
-        hint.push(plantToday.trefleData[field] == plantGuess.data[field]);
+        if(field === "year")
+            if(plantToday.trefleData[field] == plantGuess.data[field]){
+                console.log(plantToday.trefleData[field], plantGuess.data[field], plantToday.trefleData[field] == plantGuess.data[field]);
+                hint.push({isCorrect: true, isHigher: null});
+            }
+            else if(plantToday.trefleData[field] > plantGuess.data[field]){
+                console.log(plantToday.trefleData[field], plantGuess.data[field], plantToday.trefleData[field] == plantGuess.data[field]);
+                hint.push({isCorrect: false, isHigher: true})
+            }
+            else{
+                console.log(plantToday.trefleData[field], plantGuess.data[field], plantToday.trefleData[field] == plantGuess.data[field]);
+                hint.push({isCorrect: false, isHigher: false})
+            } 
+        else{
+            console.log(plantToday.trefleData[field], plantGuess.data[field], plantToday.trefleData[field] == plantGuess.data[field]);
+            hint.push(plantToday.trefleData[field] == plantGuess.data[field]);
+        }
     });
 
     console.log(hint);

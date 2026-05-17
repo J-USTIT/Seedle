@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllGameRounds, getActiveGameRound, getGameRoundRange, checkGuess } from '../controllers/gameRoundController.js';
+import { getAllGameRounds, getActiveGameRound, getGameRoundRange, checkGuess } from '../controllers/gameController.js';
 
 const gameRoundRoute = express.Router();
 
