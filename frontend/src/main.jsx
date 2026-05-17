@@ -1,8 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router'
+import { AuthProvider } from './context/AuthContext.js'
 
 import App from './App.jsx'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import Dictionary from './pages/Dictionary.jsx'
 import PageNotFound from './pages/PageNotFound.jsx'
 import PlantCollection from './pages/PlantCollection.jsx'
@@ -84,6 +87,10 @@ const router = createBrowserRouter([
   }
 ]);
 
-createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router} />
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </React.StrictMode>
 )

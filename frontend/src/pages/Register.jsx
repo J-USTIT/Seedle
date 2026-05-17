@@ -1,77 +1,99 @@
-import axios from 'axios';
-
-
-// CHECK HOW TO CATCH ERROR PROPERLY
-const registerUser = async (formData) => {
-    const { data } = await axios.post('http://localhost:8001/api/auth/register', formData);
-    return data;
-}
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../utils/axiosInstance';
 
 function Register() {
+    const navigate = useNavigate();
+    const { login } = useAuth(); // Get login function from context
 
-    const onRegisterFormSubmit = (e) => {
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+
+    // Handle input changes
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [id]: value
+        }));
+    };
+
+    // Validate form before submission
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.username) {
+            newErrors.username = "Username is required";
+        }
+        if (!formData.email) {
+            newErrors.email = "Email is required";
+        }
+        if (!formData.password) {
+            newErrors.password = "Password is required";
+        }
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = "Confirm password is required";
+        }
+        if (formData.password !== formData.confirmPassword) {
+            newErrors.password = "Passwords do not match";
+            newErrors.confirmPassword = "Passwords do not match";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    // Handle registration submit
+    const onRegisterFormSubmit = async (e) => {
         e.preventDefault();
 
-        const error = {
-            username: {
-                message: "",
-                status: false
-            },
-            email: {
-                message: "",
-                status: false
-            },
-            password: {
-                message: "",
-                status: false
-            },
-            confirmPassword: {
-                message: "",
-                status: false
+        // Validate form
+        if (!validateForm()) {
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            // Call register endpoint
+            await axiosInstance.post('/auth/register', {
+                username: formData.username,
+                email: formData.email,
+                password: formData.password,
+                role: 'guest'
+            });
+
+            // Registration successful - now login to get token
+            const loginResponse = await axiosInstance.post('/auth/login', {
+                email: formData.email,
+                password: formData.password
+            });
+
+            // Use context login function to save token and user data
+            login(loginResponse.data);
+
+            // Redirect to home page
+            navigate('/home');
+            
+        } catch (error) {
+            // Handle errors from backend
+            if (error.response?.data?.message) {
+                setErrors({ submit: error.response.data.message });
+            } else {
+                setErrors({ submit: "Registration failed. Please try again." });
             }
+        } finally {
+            setLoading(false);
         }
-
-        const username = e.target.username.value;
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        const confirmPassword = e.target.confirmPassword.value;
-
-        if (username === '') {
-            error.username.status = false;
-            error.username.message = "Username field is empty.";
-        }
-        if (email === '') {
-            error.email.status = false;
-            error.email.message = "Email field is empty.";
-        }
-        if (password === '') {
-            error.password.status = false;
-            error.password.message = "Password field is empty.";
-        }
-        if (confirmPassword === '') {
-            error.confirmPassword.status = false;
-            error.confirmPassword.message = "Confirm password field is empty.";
-        }
-        if (password !== confirmPassword) {
-            error.password.status = false;
-            error.confirmPassword.status = false;
-            error.password.message = "Password does not match with confirm password.";
-            error.confirmPassword.message = "";
-        }
-
-        const registerForm = {
-            username,
-            email,
-            password,
-            role: 'guest'
-        };
-
-        document.getElementById('register').reset()
-
-        registerUser(registerForm);
-        console.log(registerForm);
-
-    }
+    };
     return (
         <div className="flex items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] p-6 font-sans">
             <div className="max-w-md w-full bg-[#FCF9F2]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(46,125,50,0.1)] border border-white/50 p-10 relative overflow-hidden animate-fade-in-up">
@@ -93,6 +115,13 @@ function Register() {
                     </div>
 
                     <form id="register" onSubmit={onRegisterFormSubmit}>
+                        {/* Show submission errors */}
+                        {errors.submit && (
+                            <div className="mb-6 p-3 bg-red-100 border border-red-300 rounded-lg text-red-700 text-sm">
+                                {errors.submit}
+                            </div>
+                        )}
+
                         <div className="mb-5">
                             <label htmlFor="username" className="block text-sm font-medium text-emerald-900/80 ml-1 mb-1.5">
                                 Username <span className="text-emerald-500">*</span>
@@ -100,12 +129,18 @@ function Register() {
                             <input
                                 type="text"
                                 id="username"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
                                 minLength={3}
                                 maxLength={16}
                                 required
-                                className="w-full px-5 py-3 bg-white/50 border border-emerald-300 hover:border-emerald-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm"
+                                className={`w-full px-5 py-3 bg-white/50 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm ${
+                                    errors.username ? 'border-red-400' : 'border-emerald-300 hover:border-emerald-400'
+                                }`}
                                 placeholder="Name"
                             />
+                            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
                         </div>
 
                         <div className="mb-5">
@@ -115,12 +150,18 @@ function Register() {
                             <input
                                 type="email"
                                 id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
                                 minLength={10}
                                 maxLength={80}
                                 required
-                                className="w-full px-5 py-3 bg-white/50 border border-emerald-300 hover:border-emerald-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm"
+                                className={`w-full px-5 py-3 bg-white/50 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm ${
+                                    errors.email ? 'border-red-400' : 'border-emerald-300 hover:border-emerald-400'
+                                }`}
                                 placeholder="plant@example.com"
                             />
+                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                         </div>
 
                         <div className="mb-5">
@@ -130,12 +171,18 @@ function Register() {
                             <input
                                 type="password"
                                 id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
                                 minLength={8}
                                 maxLength={32}
                                 required
-                                className="w-full px-5 py-3 bg-white/50 border border-emerald-300 hover:border-emerald-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm"
+                                className={`w-full px-5 py-3 bg-white/50 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm ${
+                                    errors.password ? 'border-red-400' : 'border-emerald-300 hover:border-emerald-400'
+                                }`}
                                 placeholder="••••••••"
                             />
+                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                         </div>
 
                         <div className="mb-6">
@@ -145,20 +192,27 @@ function Register() {
                             <input
                                 type="password"
                                 id="confirmPassword"
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
                                 minLength={8}
                                 maxLength={32}
                                 required
-                                className="w-full px-5 py-3 bg-white/50 border border-emerald-300 hover:border-emerald-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-500 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm"
+                                className={`w-full px-5 py-3 bg-white/50 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 transition-all text-emerald-900 placeholder-emerald-600/70 shadow-sm ${
+                                    errors.confirmPassword ? 'border-red-400' : 'border-emerald-300 hover:border-emerald-400'
+                                }`}
                                 placeholder="••••••••"
                             />
+                            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
                         </div>
 
                         <div className="pt-2 flex gap-4 mt-2">
                             <button
                                 type="submit"
-                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3.5 px-6 rounded-2xl transition-all shadow-[0_8px_20px_-6px_rgba(5,150,105,0.4)] hover:shadow-[0_12px_25px_-6px_rgba(5,150,105,0.5)] active:scale-[0.98]"
+                                disabled={loading}
+                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white font-medium py-3.5 px-6 rounded-2xl transition-all shadow-[0_8px_20px_-6px_rgba(5,150,105,0.4)] hover:shadow-[0_12px_25px_-6px_rgba(5,150,105,0.5)] active:scale-[0.98]"
                             >
-                                Sign Up
+                                {loading ? "Registering..." : "Sign Up"}
                             </button>
                             <button
                                 type="reset"
