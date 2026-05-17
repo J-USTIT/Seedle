@@ -1,3 +1,4 @@
+import { getPhilippinesMidnightDateString } from "./dateUtils.js"
 
 const getKey = (gameRoundId) => `seedle_session_${gameRoundId}`;
 
@@ -7,7 +8,7 @@ export const startSession = (gameRoundId) => {
 
     localStorage.setItem(getKey(gameRoundId), JSON.stringify({
         startTime: Date.now(),
-        date: new Date().toDateString(),
+        date: getPhilippinesMidnightDateString(),
         guesses: []
     }))
 }
@@ -46,5 +47,8 @@ export const getElapsedSeconds = (gameRoundId) => {
 export const isSessionFromToday = (gameRoundId) => {
   const session = loadSession(gameRoundId);
   if (!session) return false;
-  return session.date === new Date().toDateString(); 
+
+  console.log(session.date)
+  console.log(getPhilippinesMidnightDateString())
+  return session.date === getPhilippinesMidnightDateString(); 
 };

@@ -44,7 +44,7 @@ function PlantsHistory() {
                     {
                         allRounds && showPast === true ? allRounds?.map((round)=>
                             <tr key={round._id}>
-                                <td>{round.playDate}</td>
+                                <td>{new Date(round.playDate).toLocaleDateString()}</td>
                                 <td>{round.plantCommonName}</td>
                                 <td><button>Edit</button></td>
                             </tr>

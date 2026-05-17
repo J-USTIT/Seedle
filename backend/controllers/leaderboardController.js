@@ -17,7 +17,7 @@ export const getLocalLeaderboard = async (req, res) => {
 
         // WRONG LOGIC, ITS TECHNICALLY FOR GLOBAL
         const localLeaderboard = await UserCollections.find({ gameRound: activeRound._id }).sort({ timeSeconds: -1 }).limit(10)
-        .populate({path: "user", select: 'username' });
+        .populate({path: "user", select: 'username email' });
 
         res.status(200).json({message: "Local leaderboard statistics was retrieved successfully.", data: localLeaderboard});
     } catch (error) {

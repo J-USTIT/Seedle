@@ -5,18 +5,17 @@ import UserCollections from '../models/userCollectionModel.js';
 import { getOrCreatePlantCache } from './plantCacheController.js';
 import { getRandomTrefleId, getPlantByIDService } from '../services/trefleServices.js';
 import { generateHints } from '../services/gameServices.js';
+import { getPhilippinesMidnightDate, getPhilippinesDate } from '../utils/dateUtils.js';
 
 // AUTOMATIC POPULATION OF GAME ROUNDS
 export const autoPopulateGameRounds = async () => {
     try {
         const results = [];
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = getPhilippinesMidnightDate();
 
         for(let i = 0; i < 7; i++){
-            const date = new Date();
-            date.setHours(0, 0, 0, 0);
-            date.setDate(date.getDate() + i);
+            const date = new Date(today);
+            date.setUTCDate(date.getUTCDate() + i);
 
             const currentRound = await GameRounds.findOne({
                 isCurrent: true
@@ -74,12 +73,11 @@ export const getAllGameRounds = async (req, res) => {
 
 export const getGameRoundRange = async (req, res) => {
     try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = getPhilippinesMidnightDate();
 
-        const next7Days = new Date();
-        next7Days.setDate(today.getDate() + 7);
-        next7Days.setHours(23, 59, 59, 999);
+        const next7Days = new Date(today);
+        next7Days.setUTCDate(today.getUTCDate() + 7);
+        next7Days.setUTCHours(23, 59, 59, 999);
 
         const results = await GameRounds.find({
             playDate: {
@@ -143,7 +141,7 @@ export const checkGuess = async (req, res) => {
             // RUN FUNCTION TO RETRIEVE LOGGED USER AND CREATE NEW USERCOLLECTION
 
             // TEMPORARY HARD CODED ID (REPLACE)
-            const authUserId = await Users.findOne({email: "juliennelizzie.cho.cfad@ust.edu.ph"}); 
+            const authUserId = await Users.findOne({email: "carljefferson.lim.cics@ust.edu.ph"}); 
 
             const newUserCollection = {
                 user: authUserId.id,
@@ -152,7 +150,7 @@ export const checkGuess = async (req, res) => {
                 guessesUsed,
                 timeSeconds, 
                 completed: true,
-                answeredAt: new Date(),
+                answeredAt: getPhilippinesDate(),
             };
             
             const savedGame = await UserCollections.create(newUserCollection);
