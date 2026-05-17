@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
  * @returns {string} JWT token
  */
 
-export const generateToken = (userid, email) => {
+export const generateToken = (userId, email) => {
         const jwtToken = jwt.sign(
             { userId, email}, 
             process.env.JWT_SECRET || "this-is-nothehe-your-secret", // Your secret (use .env in production)

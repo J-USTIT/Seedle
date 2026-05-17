@@ -1,32 +1,30 @@
-import argon2id from "argon2id";
+import argon2 from "argon2";
 
 /**
- * Plaintext -> hashed by argon2id
- * @param {string} password turns plaintext password to hashed
- * @returns {Promise<string>} hashed password
+ * Hashes a plaintext password using argon2 algorithm
+ * @param {string} password - The plaintext password to hash
+ * @returns {Promise<string>} - The hashed password
  */
-
-export const hashPass = async (password) => {
+export const hashPassword = async (password) => {
     try {
-        const hashedPass = await argon2id.hash(password);
-        return  hashedPass;
-    } catch (err) {
-        throw new Error("Error hashing password: " + err.message);
+        const hashedPassword = await argon2.hash(password);
+        return hashedPassword;
+    } catch (error) {
+        throw new Error("Error hashing password: " + error.message);
     }
 };
 
 /**
- * Compares and verifies plaintext with hashed
- * @param {string} password  the plaintext
- * @param {string} hashedPass the hashed
- * @returns {Promise<boolean>} the checker, true if match, false if falase
+ * Compares a plaintext password with a hashed password
+ * @param {string} password - The plaintext password from user input
+ * @param {string} hashedPassword - The hashed password from database
+ * @returns {Promise<boolean>} - True if passwords match, false otherwise
  */
-
-export const verifyPass = async (password, hashedPass) => {
+export const comparePassword = async (password, hashedPassword) => {
     try {
-        const isValid = await argon2id.verify(hashedPass, password);
-        return isValid;
-    } catch (err) {
-        throw new Error("Error verifying password: " + err.message);
+        const isMatch = await argon2.verify(hashedPassword, password);
+        return isMatch;
+    } catch (error) {
+        throw new Error("Error comparing password: " + error.message);
     }
-}
+};
