@@ -8,7 +8,8 @@ import userRoute from "./routes/userRoute.js";
 import plantRoute from "./routes/plantRoute.js";
 import authRoute from "./routes/authRoute.js";
 import gameRoundRoute from "./routes/gameRoute.js";
-import { autoPopulateGameRounds } from "./controllers/gameRoundController.js";
+import leaderboardRoute from "./routes/leaderboardRoute.js";
+import { autoPopulateGameRounds } from "./controllers/gameController.js";
 
 const corsOptions = {
     origin: ["http://localhost:5173"],
@@ -44,6 +45,7 @@ app.use("/api", userRoute);
 app.use("/api", plantRoute); 
 app.use("/api", authRoute); 
 app.use("/api", gameRoundRoute); 
+app.use("/api", leaderboardRoute); 
 
 // Error handling for malformed JSON requests
 app.use((err, req, res, next) => {

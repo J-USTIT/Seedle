@@ -1,8 +1,9 @@
 import Users from "../models/userModel.js";
+import { getPhilippinesDate } from "../utils/dateUtils.js";
 
 export const getAllUsers = async (req, res) => {
     try {
-        const userData = await Users.find();
+        const userData = await Users.find().select('-password');
         if (!userData || userData.length == 0) {
             return res.status(400).json({message: "User data not found."});
         }
@@ -10,6 +11,51 @@ export const getAllUsers = async (req, res) => {
         res.status(200).json({userData});
     }
     catch(error) {
+        res.status(500).json({errorMessage: error.message});
+    }
+}
+
+export const editUser = async (req, res) => {
+    try {
+        const editRequest = req.body.form;
+
+        const editUserAccount = await Users.findByIdAndUpdate(editRequest._id, {
+            ...editRequest,
+            updatedAt: getPhilippinesDate()
+        })
+
+        res.status(200).json({message: "Update successful."});
+    } catch (error) {
+        res.status(500).json({errorMessage: error.message});
+    }
+}
+
+export const createUser = async (req, res) => {
+    try {
+        const createRequest = req.body.form;
+
+        const newUser = new Users(req.body.form); 
+
+        const { username, email } = newUser; 
+        const emailExists = await Users.findOne({ email }); 
+        const usernameExists = await Users.findOne({ username }); 
+        
+        // Returns error if email exists
+        if(emailExists) {
+            return res.status(400).json({message: "User already exists."});
+        }
+        
+        // Returns error if email exists
+        if(usernameExists) {
+            return res.status(400).json({message: "User already exists."});
+        }
+
+        const savedData = await newUser.save();
+        
+        console.log("Broken")
+        res.status(201).json({message: "Created new account successfully."});
+    } catch (error) {
+        console.error("Error creating user:", error);
         res.status(500).json({errorMessage: error.message});
     }
 }

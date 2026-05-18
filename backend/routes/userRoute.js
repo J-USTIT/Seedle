@@ -1,11 +1,13 @@
 import express from "express";
-import { getAllUsers } from "../controllers/userController.js";
-import { authenticateToken } from "../middleware/authMiddleware.js";
 
+import { getAllUsers, editUser, createUser } from "../controllers/userController.js";
+import { authenticateToken } from "../middleware/authMiddleware.js";
 
 const userRoute = express.Router();
 
 userRoute.get("/users", getAllUsers);
+userRoute.post("/edituser", editUser);
+userRoute.post("/createuser", createUser);
 
 // userRoute.post("/user", create);
 // userRoute.get("/user/:id", getUserById);
