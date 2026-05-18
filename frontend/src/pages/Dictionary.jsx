@@ -19,7 +19,6 @@ function Dictionary() {
         <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] p-4 sm:p-6 font-sans">
             <div className="w-full max-w-[1200px] bg-[#FCF9F2]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(46,125,50,0.1)] border border-white/50 p-6 sm:p-10 relative overflow-hidden mt-8">
                 
-                {/* Decorative Blobs */}
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-200/30 rounded-full blur-3xl animate-float pointer-events-none"></div>
                 <div className="absolute -bottom-12 -left-12 w-56 h-56 bg-green-200/30 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }}></div>
 
@@ -34,7 +33,6 @@ function Dictionary() {
                         </LinkButton>
                     </div>
 
-                    {/* Styled Form Container (Styles its children automatically) */}
                     <form 
                         onSubmit={ (e) => { e.preventDefault() }}
                         className="flex flex-col md:flex-row gap-4 mb-10 bg-white/40 p-4 rounded-2xl border border-emerald-50 shadow-sm [&_input]:flex-1 [&_input]:px-5 [&_input]:py-3 [&_input]:rounded-xl [&_input]:border [&_input]:border-emerald-100 [&_input]:bg-white/80 [&_input]:text-emerald-800 [&_input]:focus:outline-none [&_input]:focus:ring-2 [&_input]:focus:ring-emerald-400/50 [&_select]:flex-1 [&_select]:px-5 [&_select]:py-3 [&_select]:rounded-xl [&_select]:border [&_select]:border-emerald-100 [&_select]:bg-white/80 [&_select]:text-emerald-800 [&_select]:focus:outline-none [&_select]:focus:ring-2 [&_select]:focus:ring-emerald-400/50 [&_select]:cursor-pointer"
@@ -52,7 +50,6 @@ function Dictionary() {
                         </Sorting>
                     </form>
 
-                    {/* CSS Grid for Plant Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         { data !== null ? data.data?.map((plant) => 
                             <PlantCard key={plant.id} id={plant.id} title={plant.scientific_name} description={plant.common_name} />
