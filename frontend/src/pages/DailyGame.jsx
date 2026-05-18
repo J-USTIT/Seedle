@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch.js";
-import axios from 'axios';
+import { useAuth } from "../context/AuthContext.jsx";
+import axiosInstance from "../utils/axiosInstance.js";
 import { startSession, loadSession, saveGuess, getElapsedSeconds, saveResult, isSessionFromToday, clearSession } from "../utils/guessStorage.js";
 
 function DailyGame() {
@@ -11,31 +12,47 @@ function DailyGame() {
     const [guesses, setGuesses] = useState([]);
     const [result, setResult] = useState(null);
     const [roundId, setRoundId] = useState(null);
+    const [statusMessage, setStatusMessage] = useState("");
+    const [alreadyCompleted, setAlreadyCompleted] = useState(false);
+    const { isAuthenticated } = useAuth();
     
     const endpoint = query ? `http://localhost:8000/api/plants/search?q=${query}&s=asc` : `http://localhost:8000/api/plants`;
     const [plantList] = useFetch(endpoint);
 
     useEffect(()=>{
         const initSession = async () => {
-            const { data } = await axios.get('http://localhost:8001/api/activegame');
-            const { _id: id } = await data;
+            try {
+                const { data } = await axiosInstance.get('/activegame/status');
+                const id = data?.activeRoundId;
 
-            setRoundId(id);
+                setRoundId(id);
 
-            if (!isSessionFromToday(id)) {
-                clearSession(id); 
-            }
-            
-            startSession(id);
-            const session = loadSession(id);
-            if(session?.guesses.length > 0) {
-                setGuesses(session.guesses);
-                setResult(session.result);
+                if (!isSessionFromToday(id)) {
+                    clearSession(id);
+                }
+
+                startSession(id);
+                const session = loadSession(id);
+                if (session?.guesses.length > 0) {
+                    setGuesses(session.guesses);
+                    setResult(session.result);
+                }
+
+                if (data?.completed) {
+                    setAlreadyCompleted(true);
+                    setStatusMessage("You have already completed today's game.");
+                    setResult(prev => prev || { correct: true });
+                }
+            } catch (error) {
+                console.error("Error loading active game status:", error);
+                setStatusMessage("Unable to load game status. Please refresh.");
             }
         };
 
-        initSession();
-    }, [])
+        if (isAuthenticated) {
+            initSession();
+        }
+    }, [isAuthenticated])
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -43,18 +60,13 @@ function DailyGame() {
         const guess = parseInt(e.target.guess.value); // in ID
 
         try {
-            const { data: response } = await axios.post('http://localhost:8000/api/guess', {
+            const { data: response } = await axiosInstance.post('/guess', {
                 guess,
                 guessesUsed: guesses.length + 1,
                 timeSeconds: getElapsedSeconds(roundId),
             });
 
-            // USE API TO RETRIEVE DATA FROM BACKEND CACHE
-            const { data: plantGuess } = await axios.get(`http://localhost:8000/api/plant/${guess}`);
-            console.log(plantGuess.data);
-
-            // const plantGuess = plantList.data.find(plant => plant.id === guess);
-            // console.log("Plant Guess:", plantGuess);
+            const { data: plantGuess } = await axiosInstance.get(`/plant/${guess}`);
 
             const newGuess = { id: guesses.length, value: plantGuess.data, correct: response.correct , hints: response.hints }
             
@@ -64,7 +76,17 @@ function DailyGame() {
             saveResult(roundId, response);
             setResult(response);
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            const apiMessage = error.response?.data?.message;
+            if (error.response?.status === 409) {
+                setAlreadyCompleted(true);
+                setResult({ correct: true });
+            }
+            if (apiMessage) {
+                setStatusMessage(apiMessage);
+            } else {
+                setStatusMessage("There was a problem submitting your guess.");
+            }
         }
     }
 
@@ -92,16 +114,18 @@ function DailyGame() {
             <h1>Daily Game</h1>
 
             <form id="guessForm" onSubmit={onSubmit} >
-                <input type="text" value={query} onChange={(e)=> setQuery(e.target.value)} disabled={ result?.correct } />
-                <select id="guess" name="guess" disabled={!plantList || result?.correct}>
+                {statusMessage && <div className="mb-4 text-sm text-amber-700">{statusMessage}</div>}
+                <input type="text" value={query} onChange={(e)=> setQuery(e.target.value)} disabled={ result?.correct || alreadyCompleted } />
+                <select id="guess" name="guess" disabled={!plantList || result?.correct || alreadyCompleted}>
                     { plantList ? plantList?.data?.filter((plant) => !guesses.some((guess) => guess.value.id === plant.id))?.map((plant) => 
                         <option key={plant.id} value={plant.id}>{plant.common_name}</option>
                     ) : <option>Loading...</option>} 
                 </select>
-                <input type="submit" value="Submit" disabled={result?.correct} />
+                <input type="submit" value="Submit" disabled={result?.correct || alreadyCompleted} />
             </form>
 
             <table>
+                {alreadyCompleted && <caption className="text-left text-sm text-emerald-800 mb-2">This game has already been completed for today.</caption>}
                 <thead>
                     <tr>
                         <th></th>
@@ -116,8 +140,8 @@ function DailyGame() {
                 </thead>
                 <tbody>
                     {
-                        guesses.length === 0 ? <tr><td colSpan={5}>Enter a guess</td></tr> : guesses.map(({value: plant, hints})=>
-                            <tr>
+                        guesses.length === 0 ? <tr><td colSpan={8}>Enter a guess</td></tr> : guesses.map(({value: plant, hints})=>
+                            <tr key={plant.id || plant.slug || `${plant.common_name}-${hints?.length}`}>
                                 <td>
                                     <img src={plant.image_url} style={tempStyle}/>
                                 </td>
