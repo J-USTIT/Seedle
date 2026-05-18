@@ -1,8 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router'
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 import App from './App.jsx'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import Dictionary from './pages/Dictionary.jsx'
 import PageNotFound from './pages/PageNotFound.jsx'
 import PlantCollection from './pages/PlantCollection.jsx'
@@ -32,7 +36,7 @@ const router = createBrowserRouter([
       },
       {
         path: "daily",
-        element: <DailyGame />,
+        element: <ProtectedRoute element={<DailyGame />} />,
       },
       {
         path: "dictionary",
@@ -40,11 +44,11 @@ const router = createBrowserRouter([
       },
       {
         path: "collections",
-        element: <PlantCollection />
+        element: <ProtectedRoute element={<PlantCollection />} />
       },
       {
         path: "plant/:id",
-        element: <PlantInformation />
+        element: <ProtectedRoute element={<PlantInformation />} />
       },
       {
         path: "leaderboard",
@@ -84,6 +88,10 @@ const router = createBrowserRouter([
   }
 ]);
 
-createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router} />
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </React.StrictMode>
 )

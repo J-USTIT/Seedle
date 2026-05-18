@@ -4,7 +4,6 @@ import EditAccountModal from "../components/EditAccountModal.jsx";
 import AddAccountModal from "../components/AddAccountModal.jsx";
 
 function Accounts() {
-
     const [data] = useFetch("http://localhost:8001/api/users");
     const [editForm, setEditForm] = useState(null);
     const [isEditOpen, setIsEditOpen] = useState(false);

@@ -5,8 +5,8 @@ function PlantsHistory() {
     // CREATE AND USE GAMEROUND
     const [showPast, setShowPast] = useState(true);
 
-    const [allRounds] = useFetch("http://localhost:8001/api/rounds");
-    const [sevenRounds] = useFetch("http://localhost:8001/api/7rounds");
+    const [allRounds] = useFetch("http://localhost:8000/api/rounds");
+    const [sevenRounds] = useFetch("http://localhost:8000/api/7rounds");
 
     const onSubmit = (e) => {
         e.preventDefault();

@@ -12,7 +12,7 @@ function DailyGame() {
     const [result, setResult] = useState(null);
     const [roundId, setRoundId] = useState(null);
     
-    const endpoint = query ? `http://localhost:8001/api/plants/search?q=${query}&s=asc` : `http://localhost:8001/api/plants`;
+    const endpoint = query ? `http://localhost:8000/api/plants/search?q=${query}&s=asc` : `http://localhost:8000/api/plants`;
     const [plantList] = useFetch(endpoint);
 
     useEffect(()=>{
@@ -43,14 +43,14 @@ function DailyGame() {
         const guess = parseInt(e.target.guess.value); // in ID
 
         try {
-            const { data: response } = await axios.post('http://localhost:8001/api/guess', {
+            const { data: response } = await axios.post('http://localhost:8000/api/guess', {
                 guess,
                 guessesUsed: guesses.length + 1,
                 timeSeconds: getElapsedSeconds(roundId),
             });
 
             // USE API TO RETRIEVE DATA FROM BACKEND CACHE
-            const { data: plantGuess } = await axios.get(`http://localhost:8001/api/plant/${guess}`);
+            const { data: plantGuess } = await axios.get(`http://localhost:8000/api/plant/${guess}`);
             console.log(plantGuess.data);
 
             // const plantGuess = plantList.data.find(plant => plant.id === guess);

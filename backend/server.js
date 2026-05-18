@@ -1,6 +1,5 @@
 import express from "express";
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import cron from "node-cron";
@@ -18,8 +17,8 @@ const corsOptions = {
 
 const app = express(); // Initializes express
 
-app.use(cors(corsOptions)); 
-app.use(bodyParser.json()); // Sets up body parsing
+app.use(cors(corsOptions));
+app.use(express.json()); // Sets up JSON body parsing
 
 
 dotenv.config(); // Loads variables from the .env file, making it usable with process.env
@@ -47,6 +46,15 @@ app.use("/api", plantRoute);
 app.use("/api", authRoute); 
 app.use("/api", gameRoundRoute); 
 app.use("/api", leaderboardRoute); 
+
+// Error handling for malformed JSON requests
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        console.warn("Malformed JSON payload received:", err.message);
+        return res.status(400).json({ message: "Malformed JSON payload" });
+    }
+    next(err);
+});
 
 // TRIGGERS CREATION OF NEW GAMEROUNDS EVERY MIDNIGHT/DAY
 cron.schedule('0 0 * * *', () => {
