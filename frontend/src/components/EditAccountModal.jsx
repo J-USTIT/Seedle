@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance.js";
 import { useEffect, useState } from "react";
 
 function EditAccountModal({setIsEditOpen, form, setForm}) {
@@ -26,7 +26,7 @@ function EditAccountModal({setIsEditOpen, form, setForm}) {
         const email = editForm.email;
         const role = editForm.role;
 
-        const { data } = await axios.post("http://localhost:8001/api/edituser", {
+        const { data } = await axiosInstance.post("/edituser", {
             form
         });
 

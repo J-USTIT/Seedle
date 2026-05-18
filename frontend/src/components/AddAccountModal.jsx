@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosInstance from "../utils/axiosInstance.js";
 import { useEffect, useState } from "react";
 
 function AddAccountModal({setIsAddOpen}) {
@@ -34,7 +34,7 @@ function AddAccountModal({setIsAddOpen}) {
         const email = addForm.email;
         const role = addForm.role;
 
-        const { data } = await axios.post("http://localhost:8001/api/createuser", {
+        const { data } = await axiosInstance.post("/createuser", {
             form
         });
 

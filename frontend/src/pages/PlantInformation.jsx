@@ -22,7 +22,7 @@ function PlantData({ plant }) {
 
 function PlantInformation() {
     const { id } = useParams();
-    const [ plant ] = useFetch(`http://localhost:8000/api/plant/${id}`);
+    const [ plant ] = useFetch(`/plant/${id}`);
     
     const isLoading = plant?.data ? false : true;
 

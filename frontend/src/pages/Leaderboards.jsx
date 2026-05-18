@@ -5,7 +5,7 @@ import useFetch from "../hooks/useFetch.js"
 function Leaderboards() {
 
     // CHANGE THIS TO RETRIEVING USERCOLLECTION DATA INSTEAD
-    const [localScoreData] = useFetch("http://localhost:8001/api/localleaderboard");
+    const [localScoreData] = useFetch("/localleaderboard");
 
     console.log(localScoreData);
     return (
