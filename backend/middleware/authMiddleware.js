@@ -1,33 +1,33 @@
 import { verifyToken } from "../utils/jwtUtils.js";
 
-/**
- * Middleware = middleman I guess, verifies JWT from request headers
- * Checks for Authorization header with format: Bearer <token>
- * Valid, attaches user data to req.user
- * Invalid, returns 401 Unauthorized with error message
- */
-
 export const authenticateToken = (req, res, next) => {
     try {
-        // Get token from auth header
         const authHeader = req.headers["authorization"];
-        const token = authHeader && authHeader.split(" ")[1]; // Bearer <token>
+        const token = authHeader && authHeader.split(" ")[1];
 
-        // Looks for token
         if (!token) {
             return res.status(401).json({ message: "Access token required" });
         }
 
-        //Verifies token
         const decoded = verifyToken(token);
-
-        // Attach user data to request object
         req.user = decoded;
-
-        //Call next() to pass control to next middleware or route handler
         next();
     } catch (err) {
-        //Invalid or expired token
         return res.status(401).json({ message: err.message});
     }
+};
+
+/**
+ * Role-based access middleware
+ * Usage: requireRole("admin") or requireRole("admin", "moderator")
+ * Must be used AFTER authenticateToken
+ */
+export const requireRole = (...roles) => (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+    }
+    if (!roles.includes(req.user.role)) {
+        return res.status(403).json({ message: "Forbidden: insufficient permissions" });
+    }
+    next();
 };

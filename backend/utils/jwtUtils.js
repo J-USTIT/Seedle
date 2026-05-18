@@ -7,11 +7,11 @@ import jwt from "jsonwebtoken";
  * @returns {string} JWT token
  */
 
-export const generateToken = (userId, email) => {
+export const generateToken = (userId, email, role) => {
         const jwtToken = jwt.sign(
-            { userId, email}, 
-            process.env.JWT_SECRET || "this-is-nothehe-your-secret", // Your secret (use .env in production)
-            { expiresIn: "1d"} // Token expiry: 1 day
+            { userId, email, role }, 
+            process.env.JWT_SECRET || "this-is-nothehe-your-secret",
+            { expiresIn: "1d"}
         )
         return jwtToken;
 };

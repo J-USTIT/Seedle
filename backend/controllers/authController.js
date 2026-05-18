@@ -73,13 +73,14 @@ export const login = async (req, res) => {
        const isPasswordCorrect = await comparePassword(password, userExists.password);
 
        if (isPasswordCorrect) {
-        const token = generateToken(userExists._id, userExists.email);
+        const token = generateToken(userExists._id, userExists.email, userExists.role);
         res.status(200).json({
             message: "Login successful",
             token: token,
             userId: userExists._id,
             username: userExists.username,
-            email: userExists.email
+            email: userExists.email,
+            role: userExists.role
         });
        } else {
         return res.status(401).json({ message: "Invalid credentials" });
