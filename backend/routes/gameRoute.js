@@ -8,6 +8,6 @@ gameRoundRoute.get("/rounds", getAllGameRounds);
 gameRoundRoute.get("/activegame", getActiveGameRound);
 gameRoundRoute.get("/7rounds", getGameRoundRange);
 gameRoundRoute.post("/guess", authenticateToken, checkGuess);
-gameRoundRoute.post("/updateGameRound", updateGameRound);
+gameRoundRoute.post("/updateGameRound", authenticateToken, updateGameRound);
 
 export default gameRoundRoute;
