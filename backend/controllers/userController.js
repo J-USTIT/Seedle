@@ -19,7 +19,21 @@ export const editUser = async (req, res) => {
     try {
         const editRequest = req.body.form;
 
-        const editUserAccount = await Users.findByIdAndUpdate(editRequest._id, {
+        const { _id, username, email } = editRequest; 
+        const emailExists = await Users.findOne({ email }); 
+        const usernameExists = await Users.findOne({ username }); 
+        
+        // Returns error if username exists
+        if(usernameExists && _id.toString() !== usernameExists.id.toString()) {
+            return res.status(400).json({message: "Username already exists."});
+        }
+
+        // Returns error if email exists
+        if(emailExists && _id.toString() !== emailExists.id.toString()) {
+            return res.status(400).json({message: "Email already exists."});
+        }
+
+        const editUserAccount = await Users.findByIdAndUpdate(_id, {
             ...editRequest,
             updatedAt: getPhilippinesDate()
         })
@@ -40,14 +54,14 @@ export const createUser = async (req, res) => {
         const emailExists = await Users.findOne({ email }); 
         const usernameExists = await Users.findOne({ username }); 
         
+        // Returns error if username exists
+        if(usernameExists) {
+            return res.status(400).json({message: "Username already exists."});
+        }
+
         // Returns error if email exists
         if(emailExists) {
-            return res.status(400).json({message: "User already exists."});
-        }
-        
-        // Returns error if email exists
-        if(usernameExists) {
-            return res.status(400).json({message: "User already exists."});
+            return res.status(400).json({message: "Email already exists."});
         }
 
         const savedData = await newUser.save();

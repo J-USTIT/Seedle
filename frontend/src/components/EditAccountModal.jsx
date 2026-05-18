@@ -1,7 +1,8 @@
 import axiosInstance from "../utils/axiosInstance.js";
 import { useEffect, useState } from "react";
+import { validateEditAccountForm } from "../utils/formValidation.js";
 
-function EditAccountModal({setIsEditOpen, form, setForm}) {
+function EditAccountModal({setIsEditOpen, form, setForm, refetch}) {
     
     const [error, setError] = useState({
         username: {
@@ -26,11 +27,43 @@ function EditAccountModal({setIsEditOpen, form, setForm}) {
         const email = editForm.email;
         const role = editForm.role;
 
-        const { data } = await axiosInstance.post("/edituser", {
-            form
-        });
+        const validateForm = {
+            username: username.value,
+            email: email.value,
+            role: role.value,
+        }
 
-        console.log(data);
+        const {errors, isValid} = validateEditAccountForm(validateForm);
+        setError(errors);
+
+        if(!isValid) return
+
+        try {
+            const { data } = await axiosInstance.post("/edituser", {
+                form
+            });
+            
+            refetch();
+            setIsEditOpen(false);
+        } catch (error) {
+            const message = error.response?.data?.message;
+            if(message === "Username already exists.") 
+                setError(prev => ({
+                    ...prev,
+                    username: {
+                        message: "Username is already taken.",
+                        status: true
+                    }
+                }));
+            if(message === "Email already exists.") 
+                setError(prev => ({
+                    ...prev,
+                    email: {
+                        message: "Email is already taken.",
+                        status: true
+                    }
+                }));
+        }
     }
     
     return (
@@ -40,11 +73,12 @@ function EditAccountModal({setIsEditOpen, form, setForm}) {
                 <div>
                     <label htmlFor="username">Username: </label>
                     <input type="text" name="username" id="username" value={form.username} onChange={(e) => setForm({...form, username: e.target.value})}/>
-                    { error.username.status && <div>error.username.message</div> }
+                    { error.username.status && <span>{error.username.message}</span> }
                 </div>
                 <div>
                     <label htmlFor="email">Email: </label>
                     <input type="email" name="email" id="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} required/>
+                    { error.email.status && <span>{error.email.message}</span> }
                 </div>
                 <div>
                     <label htmlFor="role">Role: </label>

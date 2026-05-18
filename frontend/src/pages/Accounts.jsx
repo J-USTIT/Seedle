@@ -4,7 +4,7 @@ import EditAccountModal from "../components/EditAccountModal.jsx";
 import AddAccountModal from "../components/AddAccountModal.jsx";
 
 function Accounts() {
-    const [data] = useFetch("/users");
+    const [data, refetch] = useFetch("/users");
     const [editForm, setEditForm] = useState(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isAddOpen, setIsAddOpen] = useState(false);
@@ -46,8 +46,8 @@ function Accounts() {
                     ) }
                 </tbody>
             </table>
-            {isEditOpen && <EditAccountModal setIsEditOpen={setIsEditOpen} form={editForm} setForm={setEditForm}/> }
-            {isAddOpen && <AddAccountModal setIsAddOpen={setIsAddOpen}/> }
+            {isEditOpen && <EditAccountModal setIsEditOpen={setIsEditOpen} form={editForm} setForm={setEditForm} refetch={refetch}/> }
+            {isAddOpen && <AddAccountModal setIsAddOpen={setIsAddOpen} refetch={refetch}/> }
         </div>
 
     )
