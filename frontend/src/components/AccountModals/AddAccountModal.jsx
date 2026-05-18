@@ -1,6 +1,6 @@
-import axiosInstance from "../utils/axiosInstance.js";
+import axiosInstance from "../../utils/axiosInstance.js";
 import { useEffect, useState } from "react";
-import { validateAddAccountForm } from "../utils/formValidation.js";
+import { validateAddAccountForm } from "../../utils/formValidation.js";
 
 function AddAccountModal({setIsAddOpen, refetch}) {
 

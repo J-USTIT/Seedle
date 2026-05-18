@@ -4,6 +4,22 @@ import { getPhilippinesDate } from "../utils/dateUtils.js";
 export const getAllUsers = async (req, res) => {
     try {
         const userData = await Users.find().select('-password');
+        
+        if (!userData || userData.length == 0) {
+            return res.status(400).json({message: "User data not found."});
+        }
+
+        res.status(200).json({userData});
+    }
+    catch(error) {
+        res.status(500).json({errorMessage: error.message});
+    }
+}
+
+export const getAllArchivedUsers = async (req, res) => {
+    try {
+        const userData = await Users.find({ isArchived: true }).select('-password');
+        
         if (!userData || userData.length == 0) {
             return res.status(400).json({message: "User data not found."});
         }
@@ -68,6 +84,24 @@ export const createUser = async (req, res) => {
         
         console.log("Broken")
         res.status(201).json({message: "Created new account successfully."});
+    } catch (error) {
+        console.error("Error creating user:", error);
+        res.status(500).json({errorMessage: error.message});
+    }
+}
+
+export const archiveUser = async (req, res) => {
+    try {
+        const archiveUserReq = req.body.user;
+        const { _id: id } = archiveUserReq;
+
+        const archivedUser = await Users.findByIdAndUpdate(id, {
+            isArchived: true
+        }, {
+            new: true
+        });
+
+        res.status(201).json({message: "User archived succesfully."});
     } catch (error) {
         console.error("Error creating user:", error);
         res.status(500).json({errorMessage: error.message});

@@ -1,6 +1,5 @@
 import GameRounds from '../models/gameRoundModel.js';
 import PlantCaches from '../models/plantCacheModel.js';
-import Users from '../models/userModel.js';
 import UserCollections from '../models/userCollectionModel.js';
 import { getOrCreatePlantCache } from './plantCacheController.js';
 import { getRandomTrefleId, getPlantByIDService } from '../services/trefleServices.js';
@@ -63,10 +62,17 @@ export const autoPopulateGameRounds = async () => {
 // GETS ALL GAMEROUNDS
 export const getAllGameRounds = async (req, res) => {
     try {
-        const rounds = await GameRounds.find({});
+        console.log("Getting")
+        const rounds = await GameRounds.find({}).populate({
+            path: 'plant',
+            select: 'trefleId' // field name from PlantCache schema
+        });
 
-        res.json(rounds);
+        console.log(rounds[0].plant.trefleId);
+
+        res.status(200).json(rounds);
     } catch (error) {
+        console.log(error.message)
         res.status(500).json({errorMessage: "Failed to fetch all game rounds."});
     }
 }
@@ -140,11 +146,8 @@ export const checkGuess = async (req, res) => {
         if(plantToday.trefleId === guessedPlant.data.id){
             // RUN FUNCTION TO RETRIEVE LOGGED USER AND CREATE NEW USERCOLLECTION
 
-            // TEMPORARY HARD CODED ID (REPLACE)
-            const authUserId = await Users.findOne({email: "carljefferson.lim.cics@ust.edu.ph"}); 
-
             const newUserCollection = {
-                user: authUserId.id,
+                user: req.user.userId,
                 plant: plantToday.id,
                 gameRound: gameToday.id,
                 guessesUsed,
@@ -163,6 +166,24 @@ export const checkGuess = async (req, res) => {
             res.status(200).json({correct: false, hints: generatedHints});
         }
 
+    } catch (error) {
+        res.status(500).json({errorMessage: "Failed to match guess."});
+    }
+}
+
+export const updateGameRound = async (req, res) => {
+    try {
+        const roundId = req.body.roundId;
+        const plantId = req.body.plantId;
+
+        const plantCache = await getOrCreatePlantCache(plantId);
+
+        const updatedGameround = await GameRounds.findByIdAndUpdate(roundId, {
+            plant: plantCache._id,
+            plantCommonName: plantCache.commonName
+        }, { new: true }); 
+        
+        res.status(200).json({message: "Game round changed successfully."});
     } catch (error) {
         res.status(500).json({errorMessage: "Failed to match guess."});
     }

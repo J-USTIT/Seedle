@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch.js";
 import axiosInstance from "../utils/axiosInstance.js";
 import { startSession, loadSession, saveGuess, getElapsedSeconds, saveResult, isSessionFromToday, clearSession } from "../utils/guessStorage.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function DailyGame() {
     
+    const { user } = useAuth();
     const [query, setQuery] = useState("");
     const [guesses, setGuesses] = useState([]);
     const [result, setResult] = useState(null);
@@ -23,8 +25,13 @@ function DailyGame() {
             if (!isSessionFromToday(id)) {
                 clearSession(id); 
             }
+
+            const existingSession = loadSession(id);
+            if (existingSession && existingSession.userId !== user?.userId) {
+                clearSession(id);
+            }
             
-            startSession(id);
+            startSession(id, user?.userId);
             const session = loadSession(id);
             if(session?.guesses.length > 0) {
                 setGuesses(session.guesses);

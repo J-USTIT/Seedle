@@ -1,8 +1,8 @@
 import { useState } from "react";
 import useFetch from "../hooks/useFetch"
-import EditAccountModal from "../components/EditAccountModal.jsx";
-import AddAccountModal from "../components/AddAccountModal.jsx";
-import ArchiveAccountModal from "../components/ArchiveAccountModal.jsx";
+import EditAccountModal from "../components/AccountModals/EditAccountModal.jsx";
+import AddAccountModal from "../components/AccountModals/AddAccountModal.jsx";
+import ArchiveAccountModal from "../components/AccountModals/ArchiveAccountModal.jsx";
 
 function Accounts() {
     const [data, refetch] = useFetch("/users");

@@ -2,13 +2,14 @@ import { getPhilippinesMidnightDateString } from "./dateUtils.js"
 
 const getKey = (gameRoundId) => `seedle_session_${gameRoundId}`;
 
-export const startSession = (gameRoundId) => {
+export const startSession = (gameRoundId, userId) => {
     const existing = loadSession(gameRoundId);
     if (existing) return;
 
     localStorage.setItem(getKey(gameRoundId), JSON.stringify({
         startTime: Date.now(),
         date: getPhilippinesMidnightDateString(),
+        userId,
         guesses: []
     }))
 }

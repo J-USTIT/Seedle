@@ -1,5 +1,5 @@
 import { Description, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance from '../../utils/axiosInstance';
 
 function ArchiveAccountModal({ isArchiveConfirmOpen, setIsArchiveConfirmOpen, user, refetch }) {
     
