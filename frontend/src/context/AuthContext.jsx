@@ -52,23 +52,19 @@ export const AuthProvider = ({ children }) => {
         console.log("User logged in:", userData);
     };
 
-    // Logout and clear sessionStorage and game session data.
+    // Logout and clear sessionStorage only (preserve localStorage game data for same-day persistence).
     const logout = () => {
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
 
-        // Clearing sessionStorage
+        // Clearing sessionStorage only
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('user');
 
-        // Clear all game session keys from localStorage for this user
-        const keys = Object.keys(localStorage);
-        keys.forEach(key => {
-            if (key.startsWith('seedle_session_') || key.startsWith('seedle_congrats_')) {
-                localStorage.removeItem(key);
-            }
-        });
+        // NOTE: localStorage game data is preserved to allow users to see their guesses
+        // after logging out and back in during the same game round. It will be cleared
+        // when a new game round becomes active (detected by isSessionFromToday check).
 
         console.log("User logged out");
     };

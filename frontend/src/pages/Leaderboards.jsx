@@ -32,10 +32,10 @@ function Leaderboards() {
                             <span>Score</span>
                         </div>
 
-                        {localScoreData?.data ? localScoreData?.data.map(({ user }, index) =>
-                            <LeaderboardEntry key={user._id} rank={index + 1} name={user.username}
+                        {localScoreData?.data && localScoreData.data.length > 0 ? localScoreData?.data.map(({ user }, index) =>
+                            user ? <LeaderboardEntry key={user._id} rank={index + 1} name={user.username}
                             //  email={user.email} 
-                         />
+                         /> : null
                         ) : (
                             <div className="text-center text-emerald-600/50 py-12 animate-pulse font-medium text-lg">
                                 LOADING DATA...
