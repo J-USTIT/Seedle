@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       },
       {
         path: "plant/:id",
-        element: <ProtectedRoute element={<PlantInformation />} />
+        element: <PlantInformation />
       },
       {
         path: "leaderboard",
