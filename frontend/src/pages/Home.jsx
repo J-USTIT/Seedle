@@ -19,7 +19,7 @@ function Home() {
                     </div>
 
                     <h1 className="text-5xl md:text-6xl font-bold text-emerald-900 tracking-tight mb-6 p-0">
-                        Welcome to Bseedle
+                        Welcome to Seedle
                     </h1>
 
                     <p className="text-lg text-emerald-700/80 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
