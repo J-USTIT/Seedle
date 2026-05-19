@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { validateAddAccountForm } from "../../utils/formValidation.js";
 
 function AddAccountModal({setIsAddOpen, refetch}) {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const [form, setForm] = useState({
         username: "",
@@ -102,12 +104,14 @@ function AddAccountModal({setIsAddOpen, refetch}) {
                 </div>
                 <div>
                     <label htmlFor="password">Password: </label>
-                    <input type="password" name="password" id="password" value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} required/>
+                    <input type={showPassword ? "text" : "password"} name="password" id="password" value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} required/>
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ marginLeft: '5px' }}>{showPassword ? "Hide" : "Show"}</button>
                     {error.password.status && <span>{error.password.message}</span>}
                 </div>
                 <div>
                     <label htmlFor="confirmPassword">Confirm Password: </label>
-                    <input type="password" name="confirmPassword" id="confirmPassword" value={form.confirmPassword} onChange={(e) => setForm({...form, confirmPassword: e.target.value})} required/>
+                    <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" id="confirmPassword" value={form.confirmPassword} onChange={(e) => setForm({...form, confirmPassword: e.target.value})} required/>
+                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ marginLeft: '5px' }}>{showConfirmPassword ? "Hide" : "Show"}</button>
                     {error.confirmPassword.status && <span>{error.confirmPassword.message}</span>}
                 </div>
                 <div>

@@ -29,11 +29,11 @@ const MONGOURL = process.env.MONGO_URL;
 // Initiates the connection to the database via Mongoose
 mongoose
     .connect(MONGOURL)
-    .then(()=>{
+    .then(() => {
         console.log("DB Connected Successfully!");
 
         // When successful, it starts listening to any HTTP request 
-        app.listen(PORT, ()=>{
+        app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
     })
@@ -41,11 +41,11 @@ mongoose
 
 
 // SETTING API ROUTES FOR FRONTEND
-app.use("/api", userRoute); 
-app.use("/api", plantRoute); 
-app.use("/api", authRoute); 
-app.use("/api", gameRoundRoute); 
-app.use("/api", leaderboardRoute); 
+app.use("/api", userRoute);
+app.use("/api", plantRoute);
+app.use("/api", authRoute);
+app.use("/api", gameRoundRoute);
+app.use("/api", leaderboardRoute);
 
 // Error handling for malformed JSON requests
 app.use((err, req, res, next) => {
@@ -59,7 +59,7 @@ app.use((err, req, res, next) => {
 // TRIGGERS CREATION OF NEW GAMEROUNDS EVERY MIDNIGHT/DAY
 cron.schedule('0 0 * * *', () => {
     console.log("Auto-populating game rounds...");
-    autoPopulateGameRounds(); 
+    autoPopulateGameRounds();
 });
 
 console.log("Auto-populating game rounds...");
