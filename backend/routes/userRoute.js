@@ -2,6 +2,7 @@ import express from "express";
 
 import { getAllUsers, getAllArchivedUsers, editUser, createUser, archiveUser } from "../controllers/userController.js";
 import { authenticateToken } from "../middleware/authMiddleware.js";
+import { getUserCollection, getUserCollectionItem } from "../controllers/userCollectionController.js";
 
 const userRoute = express.Router();
 
@@ -9,6 +10,8 @@ userRoute.get("/users", getAllUsers);
 userRoute.get("/archivedusers", getAllArchivedUsers);
 userRoute.post("/edituser", editUser);
 userRoute.post("/createuser", createUser);
+userRoute.get("/user/collection", authenticateToken, getUserCollection);
+userRoute.get("/user/collection/:plantId", authenticateToken, getUserCollectionItem);
 userRoute.post("/archiveuser", archiveUser);
 
 // userRoute.post("/user", create);
@@ -40,3 +43,4 @@ userRoute.get("/user/me", authenticateToken, (req, res) => {
 });
 
 export default userRoute;
+

@@ -115,59 +115,82 @@ export const getActiveGameRound = async (req, res) => {
     }
 }
 
-export const getActiveGameRoundId = async (req, res) => {
+
+export const getActiveGameStatus = async (req, res) => {
     try {
         const activeGameRound = await GameRounds.findOne({ isCurrent: true });
-        res.status(200).json({ id: activeGameRound._id });
+        if (!activeGameRound) {
+            return res.status(404).json({ message: 'No active game round found.' });
+        }
+
+        const completedCollection = await UserCollections.findOne({
+            user: req.user.userId,
+            gameRound: activeGameRound._id,
+            completed: true,
+        });
+
+        return res.status(200).json({
+            activeRoundId: activeGameRound._id,
+            completed: !!completedCollection,
+            collection: completedCollection ? {
+                guessesUsed: completedCollection.guessesUsed,
+                timeSeconds: completedCollection.timeSeconds,
+                answeredAt: completedCollection.answeredAt
+            } : null
+        });
     } catch (error) {
-        res.status(500).json({errorMessage: "Failed to fetch active game round id."});
+        console.error("Error fetching active game status:", error);
+        res.status(500).json({errorMessage: "Failed to fetch active game status."});
     }
 }
 
 // WHEN IT MATCHES
 export const checkGuess = async (req, res) => {
     try {
-        // RETRIEVE GUESS AND QUERY
-        const { guess, guessesUsed, timeSeconds } = req.body; // guess is in ID
+        const { guess, guessesUsed, timeSeconds } = req.body;
+
+        const gameToday = await GameRounds.findOne({ isCurrent: true });
+        if (!gameToday) {
+            return res.status(404).json({ message: 'No active game round found.' });
+        }
+
+        const existingCompletion = await UserCollections.findOne({
+            user: req.user.userId,
+            gameRound: gameToday._id,
+            completed: true,
+        });
+
+        if (existingCompletion) {
+            return res.status(409).json({ message: 'You have already completed today\'s game.', completed: true });
+        }
 
         const guessedPlant = await getPlantByIDService(guess);
-        
-        // CHECK IF ISCURRENT GAMEROUND MATCHES
-        const gameToday = await GameRounds.findOne({ isCurrent: true });
-
         const plantToday = await PlantCaches.findById(gameToday.plant);
 
-        // IF MATCH THEN RETURN SUCCESS
-
-        // console.log(plantToday);
-        // console.log(guessedPlant.data.id);
-
         const generatedHints = generateHints(plantToday, guessedPlant);
-        if(plantToday.trefleId === guessedPlant.data.id){
-            // RUN FUNCTION TO RETRIEVE LOGGED USER AND CREATE NEW USERCOLLECTION
 
+        if (plantToday.trefleId === guessedPlant.data.id) {
             const newUserCollection = {
                 user: req.user.userId,
                 plant: plantToday.id,
                 gameRound: gameToday.id,
                 guessesUsed,
-                timeSeconds, 
+                timeSeconds,
                 completed: true,
                 answeredAt: getPhilippinesDate(),
             };
-            
-            const savedGame = await UserCollections.create(newUserCollection);
-            
+
+            await UserCollections.create(newUserCollection);
             console.log("SAVED USER COLLECTION");
 
-            res.status(200).json({correct: true, hints: generatedHints});
-        }
-        else{
-            res.status(200).json({correct: false, hints: generatedHints});
+            return res.status(200).json({ correct: true, hints: generatedHints });
         }
 
+        return res.status(200).json({ correct: false, hints: generatedHints });
+
     } catch (error) {
-        res.status(500).json({errorMessage: "Failed to match guess."});
+        console.error("Error checking guess:", error);
+        res.status(500).json({ errorMessage: "Failed to match guess.", details: error.message });
     }
 }
 

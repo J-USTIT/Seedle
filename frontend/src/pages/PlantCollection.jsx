@@ -1,70 +1,201 @@
-import { useState, useEffect } from "react"
-import PlantCard from "../components/PlantCard.jsx"
+import { useState, useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance.js";
+import CollectionPlantCard from "../components/CollectionPlantCard.jsx";
+import CollectionModal from "../components/CollectionModal.jsx";
 import LinkButton from "../components/LinkButton.jsx";
-import useFetch from "../hooks/useFetch.js";
-import Loading from "../components/Loading.jsx";
-import Search from "../components/Search.jsx";
-import Filter from "../components/Filter.jsx";
-import Sorting from "../components/Sorting.jsx";
+import "../styles/collection.css";
 
 function PlantCollection() {
-    // FIRST CHECK FOR USER ID (AUTHENTICATION)
-    // IF USER, THEN GET ID AND FETCH USER DATA ALONGSIDE PLANTS
-    // ELSE, REDIRECT INTO LOGIN WITH MESSAGE WHY
+    const [allPlants, setAllPlants] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [page, setPage] = useState(1);
+    const [itemsPerPage] = useState(12);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [filter, setFilter] = useState("all");
+    const [sortBy, setSortBy] = useState("commonName");
+    const [order, setOrder] = useState("asc");
+    const [groupBy, setGroupBy] = useState("none");
+    const [selectedItem, setSelectedItem] = useState(null);
 
-    const [query, setQuery] = useState("");
-    const [filter, setFilter] = useState("");
-    const [sorting, setSorting] = useState("asc");
+    const fetchAllPlants = async () => {
+        try {
+            setLoading(true);
+            setError("");
+            const response = await axiosInstance.get(`/user/collection?collected=${filter}&sortBy=${sortBy}&order=${order}&search=${encodeURIComponent(debouncedSearch)}`);
+            setAllPlants(response.data?.data || []);
+            setPage(1);
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to load collection.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const endpoint = query ? `/plants/search?q=${query}&f=${filter}&s=${sorting}` : `/plants`;
-    const [data] = useFetch(endpoint);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    useEffect(() => {
+        fetchAllPlants();
+    }, [filter, sortBy, order, debouncedSearch]);
+
+    const openPlant = async (plant) => {
+        if (!plant.collected) return;
+        try {
+            const response = await axiosInstance.get(`/user/collection/${plant._id}`);
+            setSelectedItem(response.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const paginatedPlants = allPlants.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+    const totalPages = Math.ceil(allPlants.length / itemsPerPage);
+
+    const groups = groupBy === "none"
+        ? [{ title: "All plants", items: paginatedPlants }]
+        : Object.entries(paginatedPlants.reduce((acc, plant) => {
+            const key = groupBy === "family"
+                ? (plant.family?.common_name || plant.family || "Unknown family")
+                : (plant.collected ? "Collected" : "Uncollected");
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(plant);
+            return acc;
+        }, {}))
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([title, items]) => ({ title, items }));
+
+    const renderPageButtons = () => {
+        const buttons = [];
+        for (let i = 1; i <= totalPages; i += 1) {
+            buttons.push(
+                <button
+                    key={i}
+                    type="button"
+                    className={i === page ? "active" : ""}
+                    disabled={i === page}
+                    onClick={() => setPage(i)}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return buttons;
+    };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] p-4 sm:p-6 font-sans">
-            <div className="w-full max-w-[1200px] bg-[#FCF9F2]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(46,125,50,0.1)] border border-white/50 p-6 sm:p-10 relative overflow-hidden mt-8">
-                
-                <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-200/30 rounded-full blur-3xl animate-float pointer-events-none"></div>
-                <div className="absolute -bottom-12 -left-12 w-56 h-56 bg-green-200/30 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }}></div>
+        <div className="max-w-6xl mx-auto px-4 py-8">
+            <div className="flex flex-col gap-4 mb-6">
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-4xl font-semibold text-emerald-900">My Collection</h1>
+                    <p className="text-slate-600">View all backend plants with collected ones in color and uncollected ones greyed out.</p>
+                </div>
+                <LinkButton to="/home">Back to Home</LinkButton>
+            </div>
 
-                <div className="relative z-10">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
-                        <div>
-                            <h1 className="text-4xl md:text-5xl font-semibold text-emerald-900 tracking-tight mb-2">My Collection</h1>
-                            <p className="text-emerald-700/70 text-sm font-medium">Plants you have discovered</p>
-                        </div>
-                        <LinkButton to="/home" className="px-8 py-3 rounded-full bg-white text-[#003E33] font-bold shadow-sm hover:bg-emerald-50 transition-all duration-200 border border-emerald-100">
-                            Back to Home
-                        </LinkButton>
-                    </div>
+            <div className="collection-summary">
+                <p>
+                    Showing <strong>{paginatedPlants.length}</strong> of <strong>{allPlants.length}</strong> plants
+                    {debouncedSearch ? ` for "${debouncedSearch}"` : ''}
+                </p>
 
-                    <form 
-                        onSubmit={ (e) => { e.preventDefault() }}
-                        className="flex flex-col md:flex-row gap-4 mb-10 bg-white/40 p-4 rounded-2xl border border-emerald-50 shadow-sm [&_input]:flex-1 [&_input]:px-5 [&_input]:py-3 [&_input]:rounded-xl [&_input]:border [&_input]:border-emerald-100 [&_input]:bg-white/80 [&_input]:text-emerald-800 [&_input]:focus:outline-none [&_input]:focus:ring-2 [&_input]:focus:ring-emerald-400/50 [&_select]:flex-1 [&_select]:px-5 [&_select]:py-3 [&_select]:rounded-xl [&_select]:border [&_select]:border-emerald-100 [&_select]:bg-white/80 [&_select]:text-emerald-800 [&_select]:focus:outline-none [&_select]:focus:ring-2 [&_select]:focus:ring-emerald-400/50 [&_select]:cursor-pointer"
-                    >
-                        <Search setQuery={setQuery} />
-                        <Filter setFilter={setFilter} >
-                            <option value="">All Families</option>
-                            <option value="test">Meow</option>
-                            <option value="green">Green</option>
-                            <option value="banana">Banana</option>
-                        </Filter>
-                        <Sorting setSorting={setSorting} >
-                            <option value="asc">A-Z</option>
-                            <option value="desc">Z-A</option>
-                        </Sorting>
-                    </form>
+            </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        { data !== null ? data.data?.map((plant) => 
-                            <PlantCard key={plant.id} id={plant.id} title={plant.scientific_name} description={plant.common_name} />
-                        ) : (
-                            <div className="col-span-full flex justify-center py-12"><Loading /></div>
-                        )}
-                    </div>
+            <div className="collection-searchbar">
+                <input
+                    type="search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search plants by common or scientific name..."
+                    aria-label="Search plant collection"
+                />
+            </div>
+
+            <div className="collection-toolbar">
+                <div className="collection-toolbar__controls">
+                    <select value={filter} onChange={(e) => { setFilter(e.target.value); setPage(1); }}>
+                        <option value="all">All plants</option>
+                        <option value="collected">Collected only</option>
+                        <option value="uncollected">Uncollected only</option>
+                    </select>
+                    <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }}>
+                        <option value="commonName">Name A-Z</option>
+                        <option value="scientificName">Scientific A-Z</option>
+                        <option value="answeredAt">Collected date</option>
+                        <option value="guessesUsed">Attempts</option>
+                    </select>
+                    <select value={order} onChange={(e) => { setOrder(e.target.value); setPage(1); }}>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                    <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}>
+                        <option value="none">No grouping</option>
+                        <option value="collected">Group by collected</option>
+                        <option value="family">Group by family</option>
+                    </select>
                 </div>
             </div>
+
+            {loading ? (
+                <div className="collection-skeleton-grid">
+                    {Array.from({ length: 8 }).map((_, index) => (
+                        <article key={index} className="collection-card skeleton">
+                            <div className="collection-card__image-wrapper skeleton-box" />
+                            <div className="collection-card__body">
+                                <div className="skeleton-line skeleton-title" />
+                                <div className="skeleton-line" />
+                                <div className="skeleton-line short" />
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            ) : error ? (
+                <div className="text-red-600">{error}</div>
+            ) : allPlants.length === 0 ? (
+                <div className="collection-empty">
+                    <h3>No plants found</h3>
+                    <p>{debouncedSearch ? `No results found for "${debouncedSearch}". Try a different search term or reset the filters.` : 'Try a different filter or search term to find your plants.'}</p>
+                </div>
+            ) : (
+                <>
+                    {groups.map((group) => (
+                        <div key={group.title}>
+                            {groupBy !== "none" && (
+                                <h2 className="collection-group-title">{group.title} ({group.items.length})</h2>
+                            )}
+                            <div className="collection-grid">
+                                {group.items.map((plant) => (
+                                    <CollectionPlantCard
+                                        key={plant._id}
+                                        plant={plant}
+                                        collected={plant.collected}
+                                        onClick={() => openPlant(plant)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                    {totalPages > 1 && (
+                        <div className="collection-pagination">
+                            <button type="button" disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</button>
+                            {renderPageButtons()}
+                            <button type="button" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next</button>
+                        </div>
+                    )}
+                </>
+            )}
+
+            {selectedItem && (
+                <CollectionModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+            )}
         </div>
-    )
+    );
 }
 
-export default PlantCollection
+export default PlantCollection;

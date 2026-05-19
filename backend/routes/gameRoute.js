@@ -1,11 +1,11 @@
 import express from 'express';
-import { getAllGameRounds, getActiveGameRound, getGameRoundRange, checkGuess, updateGameRound } from '../controllers/gameController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
+import { getAllGameRounds, getActiveGameStatus, getGameRoundRange, checkGuess, updatedGameRound } from '../controllers/gameController.js';
 
 const gameRoundRoute = express.Router();
 
 gameRoundRoute.get("/rounds", getAllGameRounds);
-gameRoundRoute.get("/activegame", getActiveGameRound);
+gameRoundRoute.get("/activegame/status", authenticateToken, getActiveGameStatus);
 gameRoundRoute.get("/7rounds", getGameRoundRange);
 gameRoundRoute.post("/guess", authenticateToken, checkGuess);
 gameRoundRoute.post("/updateGameRound", authenticateToken, updateGameRound);
