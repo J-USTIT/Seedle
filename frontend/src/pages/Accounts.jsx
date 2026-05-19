@@ -47,7 +47,7 @@ function Accounts() {
                         </button>
                     </div>
 
-                    <div className="overflow-x-auto rounded-2xl border border-emerald-50/50 shadow-sm bg-white/40 backdrop-blur-sm">
+                    <div className="w-full overflow-x-auto rounded-2xl border border-emerald-50/50 shadow-sm bg-white/40 backdrop-blur-sm">
                         <table className="w-full text-left border-collapse min-w-[1000px]">
                             <thead>
                                 <tr className="bg-white/60 text-emerald-800 text-xs uppercase tracking-wider font-semibold border-b border-emerald-100/50">

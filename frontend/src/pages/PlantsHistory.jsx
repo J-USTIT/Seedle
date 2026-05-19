@@ -35,8 +35,8 @@ function PlantsHistory() {
                         <h1 className="text-3xl md:text-4xl font-semibold text-emerald-900 tracking-tight">Plants History</h1>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
-                        <form onSubmit={onSubmit} className="flex w-full md:w-auto gap-2">
+                    <div className="flex flex-col lg:flex-row gap-4 justify-between items-center mb-6">
+                        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-2">
                             <input 
                                 type="text" 
                                 name="query" 
@@ -57,7 +57,7 @@ function PlantsHistory() {
                         </button>
                     </div>
 
-                    <div className="overflow-x-auto rounded-2xl border border-emerald-50/50 shadow-sm bg-white/40 backdrop-blur-sm">
+                    <div className="w-full overflow-x-auto rounded-2xl border border-emerald-50/50 shadow-sm bg-white/40 backdrop-blur-sm">
                         <table className="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr className="bg-white/60 text-emerald-800 text-xs uppercase tracking-wider font-semibold border-b border-emerald-100/50">
