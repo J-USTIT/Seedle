@@ -90,18 +90,13 @@ function PlantsHistory() {
                     </div>
 
                     <div className="flex flex-col lg:flex-row gap-4 justify-between items-center mb-6">
-                        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-2">
-                            <input
-                                type="text"
-                                name="query"
-                                id="query"
-                                placeholder="Search by plant name..."
-                                className="w-full md:w-64 px-4 py-2.5 rounded-xl border border-emerald-100 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 text-emerald-800"
-                            />
-                            <button type="submit" className="px-5 py-2.5 rounded-xl bg-white text-emerald-800 font-bold border border-emerald-100 hover:bg-emerald-50 transition-colors">
-                                Submit
-                            </button>
-                        </form>
+                        <input
+                            type="text"
+                            value={globalFilter ?? ""}
+                            onChange={(e) => setGlobalFilter(e.target.value)}
+                            placeholder="Search by plant name..."
+                            className="w-full md:w-64 px-4 py-2.5 rounded-xl border border-emerald-100 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 text-emerald-800"
+                        />
 
                         <button
                             onClick={toggleShow}
