@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/authMiddleware.js';
-import { getAllGameRounds, getActiveGameStatus, getGameRoundRange, checkGuess, updatedGameRound } from '../controllers/gameController.js';
+import { getAllGameRounds, getActiveGameStatus, getGameRoundRange, checkGuess, updateGameRound } from '../controllers/gameController.js';
 
 const gameRoundRoute = express.Router();
 
