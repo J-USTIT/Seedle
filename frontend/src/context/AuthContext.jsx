@@ -51,15 +51,23 @@ export const AuthProvider = ({ children }) => {
         console.log("User logged in:", userData);
     };
 
-    // Logout and clear sessionStorage.
+    // Logout and clear sessionStorage and game session data.
     const logout = () => {
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
 
-        // Clearing storage
+        // Clearing sessionStorage
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('user');
+
+        // Clear all game session keys from localStorage for this user
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+            if (key.startsWith('seedle_session_') || key.startsWith('seedle_congrats_')) {
+                localStorage.removeItem(key);
+            }
+        });
 
         console.log("User logged out");
     };
