@@ -16,6 +16,10 @@ function EditAccountModal({setIsEditOpen, form, setForm, refetch}) {
         role: {
             message: "",
             status: false
+        },
+        general: {
+            message: "",
+            status: false
         }
     });
 
@@ -34,7 +38,7 @@ function EditAccountModal({setIsEditOpen, form, setForm, refetch}) {
         }
 
         const {errors, isValid} = validateEditAccountForm(validateForm);
-        setError(errors);
+        setError(prev => ({ ...prev, ...errors, general: { message: "", status: false } }));
 
         if(!isValid) return
 
@@ -46,7 +50,7 @@ function EditAccountModal({setIsEditOpen, form, setForm, refetch}) {
             refetch();
             setIsEditOpen(false);
         } catch (error) {
-            const message = error.response?.data?.message;
+            const message = error.response?.data?.message || error.response?.data?.errorMessage;
             if(message === "Username already exists.") 
                 setError(prev => ({
                     ...prev,
@@ -55,11 +59,27 @@ function EditAccountModal({setIsEditOpen, form, setForm, refetch}) {
                         status: true
                     }
                 }));
-            if(message === "Email already exists.") 
+            else if(message === "Email already exists.") 
                 setError(prev => ({
                     ...prev,
                     email: {
                         message: "Email is already taken.",
+                        status: true
+                    }
+                }));
+            else if(message === "You cannot edit your own account.")
+                setError(prev => ({
+                    ...prev,
+                    general: {
+                        message: "You cannot edit your own account.",
+                        status: true
+                    }
+                }));
+            else
+                setError(prev => ({
+                    ...prev,
+                    general: {
+                        message: message || "An unexpected error occurred.",
                         status: true
                     }
                 }));
@@ -70,6 +90,7 @@ function EditAccountModal({setIsEditOpen, form, setForm, refetch}) {
         <>
             <button onClick={() => setIsEditOpen(prev => !prev)}>Close</button>
             <form id="editForm" onSubmit={onSubmit}>
+                { error.general?.status && <span>{error.general.message}</span> }
                 <div>
                     <label htmlFor="username">Username: </label>
                     <input type="text" name="username" id="username" value={form.username} onChange={(e) => setForm({...form, username: e.target.value})}/>

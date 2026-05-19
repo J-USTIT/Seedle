@@ -3,8 +3,10 @@ import useFetch from "../hooks/useFetch"
 import EditAccountModal from "../components/AccountModals/EditAccountModal.jsx";
 import AddAccountModal from "../components/AccountModals/AddAccountModal.jsx";
 import ArchiveAccountModal from "../components/AccountModals/ArchiveAccountModal.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function Accounts() {
+    const { user: currentUser } = useAuth();
     const [data, refetch] = useFetch("/users");
     const [editForm, setEditForm] = useState(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
@@ -53,8 +55,8 @@ function Accounts() {
                             <td>{new Date(user.createdAt).toLocaleString()}</td>    
                             <td>{new Date(user.updatedAt).toLocaleString()}</td>       
                             <td>
-                                <button onClick={()=>{onEditEvent(user)}}>Edit</button>
-                                <button onClick={()=>{onArchiveEvent(user)}} disabled={user.isArchived}>Archive</button>
+                                <button onClick={()=>{onEditEvent(user)}} disabled={user._id === currentUser?.userId} title={user._id === currentUser?.userId ? "You cannot edit your own account." : ""}>Edit</button>
+                                <button onClick={()=>{onArchiveEvent(user)}} disabled={user.isArchived || user._id === currentUser?.userId} title={user._id === currentUser?.userId ? "You cannot archive your own account." : ""}>Archive</button>
                             </td>
                         </tr>
                     ) }

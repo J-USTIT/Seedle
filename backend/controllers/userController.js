@@ -1,5 +1,4 @@
 import Users from "../models/userModel.js";
-import { getPhilippinesDate } from "../utils/dateUtils.js";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -34,8 +33,16 @@ export const getAllArchivedUsers = async (req, res) => {
 export const editUser = async (req, res) => {
     try {
         const editRequest = req.body.form;
+        const { _id, username, email } = editRequest;
 
-        const { _id, username, email } = editRequest; 
+        console.log("[editUser] req.user:", req.user);
+
+        // Prevent admins from editing their own account through this endpoint
+        const loggedInId = req.user?.userId ?? req.user?.id ?? req.user?._id;
+        if (loggedInId && _id.toString() === loggedInId.toString()) {
+            return res.status(403).json({ message: "You cannot edit your own account." });
+        }
+
         const emailExists = await Users.findOne({ email }); 
         const usernameExists = await Users.findOne({ username }); 
         
@@ -50,12 +57,14 @@ export const editUser = async (req, res) => {
         }
 
         const editUserAccount = await Users.findByIdAndUpdate(_id, {
-            ...editRequest,
-            updatedAt: getPhilippinesDate()
-        })
+            username,
+            email,
+            role: editRequest.role,
+        }, { new: true, runValidators: true });
 
         res.status(200).json({message: "Update successful."});
     } catch (error) {
+        console.error("editUser error:", error);
         res.status(500).json({errorMessage: error.message});
     }
 }
@@ -94,6 +103,12 @@ export const archiveUser = async (req, res) => {
     try {
         const archiveUserReq = req.body.user;
         const { _id: id } = archiveUserReq;
+
+        // Prevent admins from archiving their own account
+        const loggedInId = req.user?.userId ?? req.user?.id ?? req.user?._id;
+        if (loggedInId && id.toString() === loggedInId.toString()) {
+            return res.status(403).json({ message: "You cannot archive your own account." });
+        }
 
         const archivedUser = await Users.findByIdAndUpdate(id, {
             isArchived: true
