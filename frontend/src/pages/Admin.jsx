@@ -8,6 +8,7 @@ function Admin() {
                 <LinkButton to="/home" className="px-4 sm:px-6 py-2.5 rounded-xl text-emerald-800 font-bold hover:bg-emerald-50 transition-colors">Home</LinkButton>
                 <LinkButton to="/admin/accounts" className="px-4 sm:px-6 py-2.5 rounded-xl text-emerald-800 font-bold hover:bg-emerald-50 transition-colors">Accounts</LinkButton>
                 <LinkButton to="/admin/plantshistory" className="px-4 sm:px-6 py-2.5 rounded-xl text-emerald-800 font-bold hover:bg-emerald-50 transition-colors">Plants History</LinkButton>
+                <LinkButton to="/admin/developers" className="px-4 sm:px-6 py-2.5 rounded-xl text-emerald-800 font-bold hover:bg-emerald-50 transition-colors">Developers</LinkButton>
             </nav>
             <main>
                 <Outlet />

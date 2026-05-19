@@ -20,6 +20,7 @@ import Admin from './pages/Admin.jsx'
 import Accounts from './pages/Accounts.jsx'
 import Home from './pages/Home.jsx'
 import PlantsHistory from './pages/PlantsHistory.jsx'
+import Developers from './pages/Developers.jsx'
 import './App.css'
 
 const router = createBrowserRouter([
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
       {
         path: "plantshistory",
         element: <PlantsHistory />,
+      },
+      {
+        path: "developers",
+        element: <Developers />,
       },
     ],
   },

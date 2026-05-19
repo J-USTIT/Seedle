@@ -9,6 +9,7 @@ import plantRoute from "./routes/plantRoute.js";
 import authRoute from "./routes/authRoute.js";
 import gameRoundRoute from "./routes/gameRoute.js";
 import leaderboardRoute from "./routes/leaderboardRoute.js";
+import developerRoute from "./routes/developerRoute.js";
 import { autoPopulateGameRounds } from "./controllers/gameController.js";
 
 const corsOptions = {
@@ -19,6 +20,7 @@ const app = express(); // Initializes express
 
 app.use(cors(corsOptions));
 app.use(express.json()); // Sets up JSON body parsing
+app.use(express.static('public')); // Serve static files from public folder
 
 
 dotenv.config(); // Loads variables from the .env file, making it usable with process.env
@@ -46,6 +48,7 @@ app.use("/api", plantRoute);
 app.use("/api", authRoute);
 app.use("/api", gameRoundRoute);
 app.use("/api", leaderboardRoute);
+app.use("/api", developerRoute);
 
 // Error handling for malformed JSON requests
 app.use((err, req, res, next) => {
