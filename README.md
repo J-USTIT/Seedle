@@ -13,11 +13,16 @@ THINGS TO TAKE NOTE OF:
 3. Ensure that you have internet connection when running the project. 
 4. Ensure that the node modules or dependencies are all downloaded. If there is any dependencies missing or in conflict, run 'npm install'.
 5. The trefle token only allows for a certain amount of calls per minute. If there is an error, try to wait before trying to query again. If problem still persists then there might be other issues at play.
+6. For the project to run, you technically don't need to import any database, as long as you have MongoDB and it is able to communicate with the backend, then it should populate gamerounds, plantcache, and usercollections. As for user, without importing or manipulating the role registered from guest to admin, you won't be able to access the admin pages. (TLDR: import the users collection provided then use it to login)
 
+SAMPLE USER:
+- Email: example@gmail.com
+- Password: P@$$w0rd 
 
 TROUBLESHOOTING:
 - Case of missing dependencies
     - Go to backend and frontend folders and type 'npm install'
     - Rerun the project
 - Error Code Status 500, unable to retrieve any data from database (Register, Login, etc.) 
-    - Check if there is a connection to the MongoDB. You could try replacing the MONGOURI in the backend .env file with the connection string coming from your MongoDB. 
+    - Check if there is a connection to the MongoDB. You could try replacing the MONGOURI in the backend .env file with the connection string coming from your MongoDB.
+ 
