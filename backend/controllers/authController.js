@@ -39,7 +39,7 @@ export const register = async (req, res) => {
     } catch (err) {
         if (err.code === 11000) {
             const field = Object.keys(err.keyValue)[0];
-            return res.status(400).json({ message: `${field} already exists.` });
+            return res.status(400).json({ message: `${field.charAt(0).toUpperCase()}${field.slice(1)} already exists.` });
         }
         res.status(500).json({ 
             message: "Error registering user: " + err.message 
@@ -65,7 +65,7 @@ export const login = async (req, res) => {
         return res.status(400).json({ message: "Email and password required" });
        }
 
-       const userExists = await Users.findOne({ email });
+       const userExists = await Users.findOne({ email, isArchived: false });
        if (!userExists) {
         return res.status(401).json({ message: "Invalid credentials" });
        }
@@ -73,13 +73,14 @@ export const login = async (req, res) => {
        const isPasswordCorrect = await comparePassword(password, userExists.password);
 
        if (isPasswordCorrect) {
-        const token = generateToken(userExists._id, userExists.email);
+        const token = generateToken(userExists._id, userExists.email, userExists.role);
         res.status(200).json({
             message: "Login successful",
             token: token,
             userId: userExists._id,
             username: userExists.username,
-            email: userExists.email
+            email: userExists.email,
+            role: userExists.role
         });
        } else {
         return res.status(401).json({ message: "Invalid credentials" });

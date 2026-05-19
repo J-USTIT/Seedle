@@ -1,12 +1,25 @@
 import { useState } from "react";
 import useFetch from "../hooks/useFetch.js";
+import EditPlantHistoryModal from "../components/PlantHistoryModals/EditPlantHistoryModal.jsx";
 
 function PlantsHistory() {
     // CREATE AND USE GAMEROUND
     const [showPast, setShowPast] = useState(true);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [round, setRound] = useState(null);
 
-    const [allRounds] = useFetch("http://localhost:8000/api/rounds");
-    const [sevenRounds] = useFetch("http://localhost:8000/api/7rounds");
+    const [allRounds, refetchAllRounds] = useFetch("/rounds");
+    const [sevenRounds, refetchSevenRounds] = useFetch("/7rounds");
+
+    const editPlantHistoryModal = (round) => {
+        setIsEditOpen((prev) => !prev);
+        setRound((prev) => round);
+        console.log(isEditOpen);
+    }
+
+    const toggleShow = () => {
+        setShowPast((prev) => !prev)
+    }   
 
     const onSubmit = (e) => {
         e.preventDefault();
@@ -14,10 +27,6 @@ function PlantsHistory() {
         const form = e.target;
 
         const query = form.query.value;
-    }
-
-    const toggleShow = () => {
-        setShowPast((prev) => !prev)
     }
 
     return (
@@ -46,7 +55,7 @@ function PlantsHistory() {
                             <tr key={round._id}>
                                 <td>{new Date(round.playDate).toLocaleDateString()}</td>
                                 <td>{round.plantCommonName}</td>
-                                <td><button>Edit</button></td>
+                                <td><button onClick={() => editPlantHistoryModal(round)}>Edit</button></td>
                             </tr>
                         ): showPast === true ?? <tr><td colSpan={3}>Loading...</td></tr>
                     }
@@ -55,12 +64,14 @@ function PlantsHistory() {
                             <tr key={round._id}>
                                 <td>{round.playDate}</td>
                                 <td>{round.plantCommonName}</td>
-                                <td><button>Edit</button></td>
+                                <td><button onClick={() => editPlantHistoryModal(round)}>Edit</button></td>
                             </tr>
                         ): showPast === false ?? <tr><td colSpan={3}>Loading...</td></tr>
                     }
                 </tbody>
             </table>
+            
+            { isEditOpen && <EditPlantHistoryModal isEditOpen={isEditOpen} setIsEditOpen={setIsEditOpen} round={round} refetchAllRounds={refetchAllRounds} refetchSevenRounds={refetchSevenRounds} />}
         </div>
     )
 }

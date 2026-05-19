@@ -4,6 +4,22 @@ import { getPhilippinesDate } from "../utils/dateUtils.js";
 export const getAllUsers = async (req, res) => {
     try {
         const userData = await Users.find().select('-password');
+        
+        if (!userData || userData.length == 0) {
+            return res.status(400).json({message: "User data not found."});
+        }
+
+        res.status(200).json({userData});
+    }
+    catch(error) {
+        res.status(500).json({errorMessage: error.message});
+    }
+}
+
+export const getAllArchivedUsers = async (req, res) => {
+    try {
+        const userData = await Users.find({ isArchived: true }).select('-password');
+        
         if (!userData || userData.length == 0) {
             return res.status(400).json({message: "User data not found."});
         }
@@ -19,7 +35,21 @@ export const editUser = async (req, res) => {
     try {
         const editRequest = req.body.form;
 
-        const editUserAccount = await Users.findByIdAndUpdate(editRequest._id, {
+        const { _id, username, email } = editRequest; 
+        const emailExists = await Users.findOne({ email }); 
+        const usernameExists = await Users.findOne({ username }); 
+        
+        // Returns error if username exists
+        if(usernameExists && _id.toString() !== usernameExists.id.toString()) {
+            return res.status(400).json({message: "Username already exists."});
+        }
+
+        // Returns error if email exists
+        if(emailExists && _id.toString() !== emailExists.id.toString()) {
+            return res.status(400).json({message: "Email already exists."});
+        }
+
+        const editUserAccount = await Users.findByIdAndUpdate(_id, {
             ...editRequest,
             updatedAt: getPhilippinesDate()
         })
@@ -40,20 +70,38 @@ export const createUser = async (req, res) => {
         const emailExists = await Users.findOne({ email }); 
         const usernameExists = await Users.findOne({ username }); 
         
+        // Returns error if username exists
+        if(usernameExists) {
+            return res.status(400).json({message: "Username already exists."});
+        }
+
         // Returns error if email exists
         if(emailExists) {
-            return res.status(400).json({message: "User already exists."});
-        }
-        
-        // Returns error if email exists
-        if(usernameExists) {
-            return res.status(400).json({message: "User already exists."});
+            return res.status(400).json({message: "Email already exists."});
         }
 
         const savedData = await newUser.save();
         
         console.log("Broken")
         res.status(201).json({message: "Created new account successfully."});
+    } catch (error) {
+        console.error("Error creating user:", error);
+        res.status(500).json({errorMessage: error.message});
+    }
+}
+
+export const archiveUser = async (req, res) => {
+    try {
+        const archiveUserReq = req.body.user;
+        const { _id: id } = archiveUserReq;
+
+        const archivedUser = await Users.findByIdAndUpdate(id, {
+            isArchived: true
+        }, {
+            new: true
+        });
+
+        res.status(201).json({message: "User archived succesfully."});
     } catch (error) {
         console.error("Error creating user:", error);
         res.status(500).json({errorMessage: error.message});

@@ -32,12 +32,13 @@ export const AuthProvider = ({ children }) => {
 
         // Login and store token/user in sessionStorage.
     const login = (authData) => {
-        const { token, userId, username, email } = authData;
+        const { token, userId, username, email, role } = authData;
 
         const userData = {
             userId,
             username,
-            email
+            email,
+            role
         };
 
         setToken(token);

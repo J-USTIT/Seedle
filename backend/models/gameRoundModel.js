@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const gameRoundSchema = new mongoose.Schema({
     plant: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'PlantCache',
+        ref: 'PlantCaches',
         required: true
     },
     plantCommonName: {

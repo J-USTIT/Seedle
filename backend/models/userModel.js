@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
         enum: ['guest', 'admin'],
         default: 'guest'
     },
+    isArchived: {
+        type: Boolean,
+        default: false
+    }
 },
 {
     timestamps: true

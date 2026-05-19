@@ -54,9 +54,11 @@ function App() {
             </button>
           </>
         )}
-        <LinkButton to="admin">
-          Admin
-        </LinkButton>
+        {isAuthenticated && user?.role === "admin" && (
+          <LinkButton to="admin">
+            Admin
+          </LinkButton>
+        )}
       </NavigationBar>
       <div>
         <Outlet />

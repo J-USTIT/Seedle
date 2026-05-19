@@ -3,11 +3,11 @@ import useFetch from "../hooks/useFetch.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import axiosInstance from "../utils/axiosInstance.js";
 import { startSession, loadSession, saveGuess, getElapsedSeconds, saveResult, isSessionFromToday, clearSession } from "../utils/guessStorage.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function DailyGame() {
     
-    // AT START SHOULD CHECK IF PLAYER HAS PLAYED
-    
+    const { user } = useAuth();
     const [query, setQuery] = useState("");
     const [guesses, setGuesses] = useState([]);
     const [result, setResult] = useState(null);
@@ -17,7 +17,7 @@ function DailyGame() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { isAuthenticated, user } = useAuth();
     
-    const endpoint = query ? `http://localhost:8000/api/plants/search?q=${query}&s=asc` : `http://localhost:8000/api/plants`;
+    const endpoint = query ? `/plants/search?q=${query}&s=asc` : `/plants`;
     const [plantList] = useFetch(endpoint);
 
     useEffect(()=>{
@@ -185,7 +185,7 @@ function DailyGame() {
             </table>
 
             {/* WIN COMPONENT */}
-        </>
+        </div>
     )
 }
 

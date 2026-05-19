@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useCallback } from "react";
+import axiosInstance from "../utils/axiosInstance";
 
 const useFetch = (url) => {
     const [data, setData] = useState(null);
+    const [refetchIndex, setRefetchIndex] = useState(0);
+
+    const refetch = useCallback(() => setRefetchIndex(prev => prev + 1), []);
 
     useEffect(()=>{
-        axios.get(url)
+        axiosInstance.get(url)
             .then((res)=> setData(res.data));
-    }, [url])
+    }, [url, refetchIndex])
 
-    return [data];
+    return [data, refetch];
 }
 
 export default useFetch;

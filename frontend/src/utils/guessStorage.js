@@ -10,6 +10,7 @@ export const startSession = (gameRoundId, userId) => {
     localStorage.setItem(getKey(gameRoundId, userId), JSON.stringify({
         startTime: Date.now(),
         date: getPhilippinesMidnightDateString(),
+        userId,
         guesses: []
     }))
 }
