@@ -14,7 +14,8 @@ function DailyGame() {
     const [roundId, setRoundId] = useState(null);
     const [statusMessage, setStatusMessage] = useState("");
     const [alreadyCompleted, setAlreadyCompleted] = useState(false);
-    const { isAuthenticated } = useAuth();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { isAuthenticated, user } = useAuth();
     
     const endpoint = query ? `http://localhost:8000/api/plants/search?q=${query}&s=asc` : `http://localhost:8000/api/plants`;
     const [plantList] = useFetch(endpoint);
@@ -27,12 +28,12 @@ function DailyGame() {
 
                 setRoundId(id);
 
-                if (!isSessionFromToday(id)) {
-                    clearSession(id);
+                if (!isSessionFromToday(id, user?.userId)) {
+                    clearSession(id, user?.userId);
                 }
 
-                startSession(id);
-                const session = loadSession(id);
+                startSession(id, user?.userId);
+                const session = loadSession(id, user?.userId);
                 if (session?.guesses.length > 0) {
                     setGuesses(session.guesses);
                     setResult(session.result);
@@ -40,7 +41,6 @@ function DailyGame() {
 
                 if (data?.completed) {
                     setAlreadyCompleted(true);
-                    setStatusMessage("You have already completed today's game.");
                     setResult(prev => prev || { correct: true });
                 }
             } catch (error) {
@@ -49,31 +49,32 @@ function DailyGame() {
             }
         };
 
-        if (isAuthenticated) {
+        if (isAuthenticated && user?.userId) {
             initSession();
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, user?.userId])
 
     const onSubmit = async (e) => {
         e.preventDefault();
         
-        const guess = parseInt(e.target.guess.value); // in ID
+        const guess = parseInt(e.target.guess.value);
 
+        setIsSubmitting(true);
         try {
             const { data: response } = await axiosInstance.post('/guess', {
                 guess,
                 guessesUsed: guesses.length + 1,
-                timeSeconds: getElapsedSeconds(roundId),
+                timeSeconds: getElapsedSeconds(roundId, user?.userId),
             });
 
             const { data: plantGuess } = await axiosInstance.get(`/plant/${guess}`);
 
             const newGuess = { id: guesses.length, value: plantGuess.data, correct: response.correct , hints: response.hints }
             
-            saveGuess(roundId, newGuess);
+            saveGuess(roundId, user?.userId, newGuess);
             setGuesses(prev => [...prev, newGuess]);
             
-            saveResult(roundId, response);
+            saveResult(roundId, user?.userId, response);
             setResult(response);
         } catch (error) {
             console.error(error);
@@ -87,6 +88,8 @@ function DailyGame() {
             } else {
                 setStatusMessage("There was a problem submitting your guess.");
             }
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -105,9 +108,17 @@ function DailyGame() {
         backgroundColor: "green",
     }
 
-    if(result?.correct){
+    // Show the congrats alert only once per user+round (prevents repeated alerts)
+    useEffect(() => {
+        if (!result?.correct) return;
+        if (!roundId) return;
+
+        const key = `seedle_congrats_${user?.userId || 'guest'}_${roundId}`;
+        if (sessionStorage.getItem(key)) return;
+
+        sessionStorage.setItem(key, '1');
         alert("CONGRATS YOU WON!!! DO REPLACE THIS WITH A PROPER DIALOG :)");
-    }
+    }, [result?.correct, roundId, user?.userId]);
 
     return (
         <>
@@ -121,11 +132,11 @@ function DailyGame() {
                         <option key={plant.id} value={plant.id}>{plant.common_name}</option>
                     ) : <option>Loading...</option>} 
                 </select>
-                <input type="submit" value="Submit" disabled={result?.correct || alreadyCompleted} />
+                <input type="submit" value="Submit" disabled={result?.correct || alreadyCompleted || isSubmitting} />
             </form>
 
             <table>
-                {alreadyCompleted && <caption className="text-left text-sm text-emerald-800 mb-2">This game has already been completed for today.</caption>}
+                {alreadyCompleted && <caption className="text-left text-sm text-emerald-800 mb-2">This game has already been completed for today. {/* can remove this */}</caption>}
                 <thead>
                     <tr>
                         <th></th>

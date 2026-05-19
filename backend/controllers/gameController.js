@@ -109,14 +109,6 @@ export const getActiveGameRound = async (req, res) => {
     }
 }
 
-export const getActiveGameRoundId = async (req, res) => {
-    try {
-        const activeGameRound = await GameRounds.findOne({ isCurrent: true });
-        res.status(200).json({ id: activeGameRound._id });
-    } catch (error) {
-        res.status(500).json({errorMessage: "Failed to fetch active game round id."});
-    }
-}
 
 export const getActiveGameStatus = async (req, res) => {
     try {
