@@ -40,9 +40,6 @@ function Dictionary() {
                         <Search setQuery={setQuery} />
                         <Filter setFilter={setFilter} >
                             <option value="">All Families</option>
-                            <option value="test">Meow</option>
-                            <option value="green">Green</option>
-                            <option value="banana">Banana</option>
                         </Filter>
                         <Sorting setSorting={setSorting} >
                             <option value="asc">A-Z</option>
