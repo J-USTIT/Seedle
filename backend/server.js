@@ -13,7 +13,7 @@ import developerRoute from "./routes/developerRoute.js";
 import { autoPopulateGameRounds } from "./controllers/gameController.js";
 
 const corsOptions = {
-    origin: ["http://localhost:5173"],
+    origin: process.env.CORS_ORIGIN || ["http://localhost:5173"],
 }
 
 const app = express(); // Initializes express

@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: bseedle_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - bseedle-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Node.js Backend
+  backend:
+    build: ./backend
+    container_name: bseedle_backend
+    ports:
+      - "5000:5000"
+    environment:
+      # MongoDB connection URL - uses service name 'mongodb' as hostname
+      MONGO_URL: mongodb://admin:password@mongodb:27017/bseedle_db?authSource=admin
+      PORT: 5000
+      NODE_ENV: development
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - bseedle-network
+    # Optional: Mount source code for development with live reload
+    # volumes:
+    #   - ./backend:/app
+    #   - /app/node_modules
+
+volumes:
+  mongodb_data:
+
+networks:
+  bseedle-network:
+    driver: bridge
