@@ -152,9 +152,19 @@ function DailyGame() {
                             disabled={!plantList || result?.correct || alreadyCompleted }
                             className="flex-1 px-5 py-3 rounded-2xl border border-emerald-100 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 text-emerald-800 disabled:opacity-60 cursor-pointer"
                         >
-                            { plantList ? plantList?.data?.filter((plant) => !guesses.some((guess) => guess.value.id === plant.id))?.map((plant) => 
-                                <option key={plant.id} value={plant.id}>{plant.common_name}</option>
-                            ) : <option>Loading...</option>} 
+                            { plantList ? (() => {
+                                const filteredPlants = plantList?.data
+                                    ?.filter((plant) => plant.common_name)
+                                    ?.filter((plant) => !guesses.some((guess) => guess.value.id === plant.id));
+                                
+                                return filteredPlants?.length > 0 ? (
+                                    filteredPlants.map((plant) => 
+                                        <option key={plant.id} value={plant.id}>{plant.common_name}</option>
+                                    )
+                                ) : (
+                                    <option disabled>No search results</option>
+                                );
+                            })() : <option>Loading...</option>} 
                         </select>
                         
                         <button 
