@@ -120,20 +120,29 @@ function DailyGame() {
     }, [result?.correct, roundId, user?.userId]);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] p-4 sm:p-6 font-sans">
+        <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] bg-game-grid p-4 sm:p-6 font-sans relative">
             
-            <div className="w-full max-w-[1200px] bg-[#FCF9F2]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(46,125,50,0.1)] border border-white/50 p-6 sm:p-10 relative overflow-hidden mt-8">
+            <div className="w-full max-w-[1200px] bg-[#F3F0E6]/95 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(46,125,50,0.15)] border-4 border-b-[8px] border-white/80 p-6 sm:p-10 relative overflow-hidden mt-8 text-emerald-900 animate-fade-in-up">
                 
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-200/30 rounded-full blur-3xl animate-float pointer-events-none"></div>
                 <div className="absolute -bottom-12 -left-12 w-56 h-56 bg-green-200/30 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }}></div>
 
                 <div className="relative z-10">
                     <div className="mb-10 text-center">
-                        <h1 className="text-4xl md:text-5xl font-semibold text-emerald-900 tracking-tight mb-2">
-                            Daily Game
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-emerald-900 tracking-tight mb-2 text-game-shadow">
+                            Daily Game 🌿
                         </h1>
-                        <p className="text-emerald-700/70 text-sm font-medium">Guess the plant of the day</p>
+                        <p className="text-emerald-800/80 text-sm font-bold tracking-wide">
+                            GUESS THE PLANT OF THE DAY &bull; ATTEMPTS: {guesses.length}
+                        </p>
                     </div>
+
+                    {result?.correct && (
+                        <div className="mb-8 p-4 bg-gradient-to-r from-yellow-200 to-amber-200 border-4 border-b-[8px] border-amber-500 rounded-2xl text-center shadow-lg animate-bounce">
+                            <h2 className="text-3xl font-black text-amber-800 uppercase tracking-widest">Victory! 🏆</h2>
+                            <p className="text-amber-700 font-bold mt-1 text-lg">You guessed the plant in {guesses.length} attempts!</p>
+                        </div>
+                    )}
 
                     <form id="guessForm" onSubmit={onSubmit} className="flex flex-col md:flex-row gap-4 mb-10 max-w-4xl mx-auto justify-center">
                         {statusMessage && <div className="mb-4 text-sm text-amber-700">{statusMessage}</div>}
@@ -143,14 +152,14 @@ function DailyGame() {
                             placeholder="Search plants..."
                             onChange={(e)=> setQuery(e.target.value)} 
                             disabled={ result?.correct || alreadyCompleted }
-                            className="flex-1 px-5 py-3 rounded-2xl border border-emerald-100 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 text-emerald-800 placeholder-emerald-300 disabled:opacity-60"
+                            className="flex-1 px-5 py-3 rounded-2xl border-2 border-b-[6px] border-emerald-300 bg-emerald-50 focus:outline-none focus:ring-0 focus:border-emerald-500 text-emerald-900 font-bold placeholder-emerald-400 disabled:opacity-60 transition-all"
                         />
                         
                         <select 
                             id="guess" 
                             name="guess" 
                             disabled={!plantList || result?.correct || alreadyCompleted }
-                            className="flex-1 px-5 py-3 rounded-2xl border border-emerald-100 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 text-emerald-800 disabled:opacity-60 cursor-pointer"
+                            className="flex-1 px-5 py-3 rounded-2xl border-2 border-b-[6px] border-emerald-300 bg-emerald-50 focus:outline-none focus:ring-0 focus:border-emerald-500 text-emerald-900 font-bold disabled:opacity-60 cursor-pointer transition-all"
                         >
                             { plantList ? (() => {
                                 const filteredPlants = plantList?.data
@@ -170,17 +179,17 @@ function DailyGame() {
                         <button 
                             type="submit" 
                             disabled={result?.correct || alreadyCompleted || isSubmitting}
-                            className="px-8 py-3 rounded-full bg-[#DAFAF1] text-[#003E33] font-bold shadow-sm hover:bg-[#159E5E] hover:text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                            className="px-8 py-3 rounded-2xl bg-emerald-500 text-white font-black uppercase tracking-wider border-2 border-b-[6px] border-emerald-700 hover:bg-emerald-400 hover:border-emerald-600 hover:-translate-y-1 active:border-b-2 active:translate-y-1 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2 justify-center"
                         >
-                            Submit Guess
+                            🌱 Submit Guess
                         </button>
                     </form>
 
-                    <div className="overflow-x-auto rounded-2xl border border-emerald-50/50 shadow-sm bg-white/40 backdrop-blur-sm">
+                    <div className="overflow-x-auto rounded-2xl border border-emerald-100 shadow-sm bg-white/50 backdrop-blur-sm">
                         <table className="w-full text-left border-collapse min-w-[800px]">
                             {/* {alreadyCompleted && <caption className="text-left text-sm text-emerald-800 mb-2">This game has already been completed for today. can remove this</caption>} */}
                             <thead>
-                                <tr className="bg-white/60 text-emerald-800 text-xs sm:text-sm uppercase tracking-wider font-semibold border-b border-emerald-100/50">
+                                <tr className="bg-emerald-700 text-emerald-50 text-xs sm:text-sm uppercase tracking-widest font-black border-b-4 border-emerald-900 font-mono shadow-inner">
                                     <th className="px-4 py-4"></th>
                                     <th className="px-4 py-4">Common Name</th>
                                     <th className="px-4 py-4">Family</th>
@@ -191,7 +200,7 @@ function DailyGame() {
                                     <th className="px-4 py-4">Year</th>
                                 </tr>
                             </thead>
-                            <tbody className="text-emerald-800 text-sm md:text-base">
+                            <tbody className="text-emerald-900 text-sm md:text-base font-mono font-medium">
                                 {
                                     guesses.length === 0 ? (
                                         <tr>
@@ -200,9 +209,11 @@ function DailyGame() {
                                             </td>
                                         </tr>
                                     ) : guesses.map(({value: plant, hints}, index)=>
-                                        <tr key={index} className="border-b border-emerald-50/30 hover:bg-white/30 transition-colors">
-                                            <td className="px-4 py-3 bg-white/20">
-                                                <img src={plant.image_url} alt={plant.common_name} className="w-20 h-20 object-cover rounded-xl shadow-sm" />
+                                        <tr key={index} className="border-b-[3px] border-emerald-200/50 hover:bg-white/50 transition-colors">
+                                            <td className="px-4 py-3 bg-white/40">
+                                                <div className="w-20 h-20 min-w-[5rem] min-h-[5rem] rounded-xl overflow-hidden shadow-sm flex items-center justify-center">
+                                                    <img src={plant.image_url} alt={plant.common_name} className="w-full h-full object-cover aspect-square" />
+                                                </div>
                                             </td>
                                             <td className={`px-4 py-3 ${hints[0] ? 'bg-emerald-100/70' : 'bg-rose-100/70'}`}>
                                                 {plant.common_name}
@@ -223,15 +234,15 @@ function DailyGame() {
                                             <td className={`px-4 py-3 ${hints[5] ? 'bg-emerald-100/70' : 'bg-rose-100/70'}`}>
                                                 {plant.observations}
                                             </td>
-                                            <td className={`px-4 py-3 ${hints[6]?.isCorrect ? 'bg-emerald-100/70 font-semibold' : 'bg-rose-100/70'}`}>
+                                            <td className={`px-4 py-3 ${hints[6]?.isCorrect ? 'bg-emerald-100/70 font-bold text-emerald-900' : 'bg-rose-100/70'}`}>
                                                 <div className="flex items-center gap-2">
                                                     {plant.year}
                                                     {hints[6]?.isCorrect ? (
-                                                        <span className="text-[#159E5E] font-bold text-lg">&mdash;</span>
+                                                        <span className="text-emerald-700 font-bold text-lg">&mdash;</span>
                                                     ) : hints[6]?.isHigher ? (
-                                                        <span className="text-emerald-400 font-bold text-lg">&uarr;</span>
+                                                        <span className="text-emerald-700 font-bold text-lg">&uarr;</span>
                                                     ) : (
-                                                        <span className="text-emerald-400 font-bold text-lg">&darr;</span>
+                                                        <span className="text-emerald-700 font-bold text-lg">&darr;</span>
                                                     )}
                                                 </div>
                                             </td>

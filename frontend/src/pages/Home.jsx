@@ -2,9 +2,9 @@ import LinkButton from "../components/LinkButton";
 
 function Home() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] p-6 font-sans">
+        <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gradient-to-br from-[#f4f9f4] to-[#e2f0e6] bg-game-grid p-6 font-sans relative">
 
-            <div className="w-full max-w-4xl bg-[#FCF9F2]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(46,125,50,0.1)] border border-white/50 p-10 sm:p-16 relative overflow-hidden animate-fade-in-up text-center">
+            <div className="w-full max-w-4xl bg-[#FCF9F2]/90 backdrop-blur-xl rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(46,125,50,0.1)] border-4 border-b-[8px] border-white p-10 sm:p-16 relative overflow-hidden animate-fade-in-up text-center">
 
                 {/* Decor na leaf-like blobs */}
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-emerald-200/40 rounded-full blur-2xl animate-float"></div>
@@ -18,8 +18,8 @@ function Home() {
                         </svg>
                     </div>
 
-                    <h1 className="text-5xl md:text-6xl font-bold text-emerald-900 tracking-tight mb-6 p-0">
-                        Welcome to Seedle
+                    <h1 className="text-5xl md:text-6xl font-extrabold text-emerald-900 tracking-tight mb-6 p-0 text-game-shadow">
+                        Welcome to Seedle 🌱
                     </h1>
 
                     <p className="text-lg text-emerald-700/80 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
@@ -27,11 +27,11 @@ function Home() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <LinkButton to="/daily" className="!px-8 !py-3.5 text-lg shadow-md hover:shadow-lg">
-                            Play Daily Game
+                        <LinkButton to="/daily" className="!px-8 !py-3.5 text-lg shadow-md hover:shadow-lg flex items-center gap-2">
+                            🎮 Play Daily Game
                         </LinkButton>
-                        <LinkButton to="/leaderboard" className="!px-8 !py-3.5 text-lg shadow-md hover:shadow-lg">
-                            View Leaderboards
+                        <LinkButton to="/leaderboard" className="!px-8 !py-3.5 text-lg shadow-md hover:shadow-lg flex items-center gap-2">
+                            🏆 View Leaderboards
                         </LinkButton>
                     </div>
                 </div>

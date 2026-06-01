@@ -48,7 +48,7 @@ function App() {
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-block px-5 py-2.5 rounded-full bg-red-100 text-red-700 font-medium hover:bg-red-200 transition-all"
+              className="inline-block px-5 py-2.5 rounded-full bg-red-50 text-red-700 font-bold uppercase tracking-wider border-2 border-red-600 shadow-[0_4px_0_theme(colors.red.600)] hover:bg-red-600 hover:text-white hover:shadow-[0_2px_0_theme(colors.red.800)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all duration-150"
             >
               Logout
             </button>

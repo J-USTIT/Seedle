@@ -90,13 +90,13 @@ function PlantCollection() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-in-up">
             <div className="flex flex-col gap-4 mb-6">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-4xl font-semibold text-emerald-900">My Collection</h1>
-                    <p className="text-slate-600">View all backend plants with collected ones in color and uncollected ones greyed out.</p>
+                    <h1 className="text-4xl font-semibold text-emerald-900">My Collection 🪴</h1>
+                    <p className="text-slate-600">View all backend plants with collected ones in color and uncollected ones greyed out. 🌿</p>
                 </div>
-                <LinkButton to="/home">Back to Home</LinkButton>
+                <LinkButton to="/home" className="flex items-center gap-2 justify-center max-w-fit">🏠 Back to Home</LinkButton>
             </div>
 
             <div className="collection-summary">
@@ -107,34 +107,33 @@ function PlantCollection() {
 
             </div>
 
-            <div className="collection-searchbar">
+            <div className="flex flex-col md:flex-row gap-4 mb-8 bg-white/50 p-4 rounded-2xl border border-emerald-100 shadow-sm w-full">
                 <input
                     type="search"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search plants by common or scientific name..."
+                    placeholder="Search plants..."
                     aria-label="Search plant collection"
+                    className="flex-[2] px-5 py-3 rounded-xl border border-emerald-200 bg-white/90 text-emerald-900 placeholder-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
                 />
-            </div>
 
-            <div className="collection-toolbar">
-                <div className="collection-toolbar__controls">
-                    <select value={filter} onChange={(e) => { setFilter(e.target.value); setPage(1); }}>
+                <div className="flex flex-wrap md:flex-nowrap gap-4 flex-[3]">
+                    <select value={filter} onChange={(e) => { setFilter(e.target.value); setPage(1); }} className="flex-1 px-4 py-3 rounded-xl border border-emerald-200 bg-white/90 text-emerald-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer shadow-sm hover:bg-emerald-50 transition-colors">
                         <option value="all">All plants</option>
                         <option value="collected">Collected only</option>
                         <option value="uncollected">Uncollected only</option>
                     </select>
-                    <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }}>
+                    <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} className="flex-1 px-4 py-3 rounded-xl border border-emerald-200 bg-white/90 text-emerald-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer shadow-sm hover:bg-emerald-50 transition-colors">
                         <option value="commonName">Name A-Z</option>
                         <option value="scientificName">Scientific A-Z</option>
                         <option value="answeredAt">Collected date</option>
                         <option value="guessesUsed">Attempts</option>
                     </select>
-                    <select value={order} onChange={(e) => { setOrder(e.target.value); setPage(1); }}>
+                    <select value={order} onChange={(e) => { setOrder(e.target.value); setPage(1); }} className="w-32 px-4 py-3 rounded-xl border border-emerald-200 bg-white/90 text-emerald-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer shadow-sm hover:bg-emerald-50 transition-colors">
                         <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
                     </select>
-                    <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)}>
+                    <select value={groupBy} onChange={(e) => setGroupBy(e.target.value)} className="flex-1 px-4 py-3 rounded-xl border border-emerald-200 bg-white/90 text-emerald-900 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-400 cursor-pointer shadow-sm hover:bg-emerald-50 transition-colors">
                         <option value="none">No grouping</option>
                         <option value="collected">Group by collected</option>
                         <option value="family">Group by family</option>

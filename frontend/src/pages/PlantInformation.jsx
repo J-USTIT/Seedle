@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import useFetch from "../hooks/useFetch";
 import Loading from "../components/Loading";
-import LinkButton from "../components/LinkButton";
+import { useNavigate } from "react-router-dom";
 
 function PlantData({ plant }) {
     const { common_name, scientific_name, image_url, family, genus, edible, vegetable, observations, year } = plant;
@@ -54,6 +54,7 @@ function PlantData({ plant }) {
 
 function PlantInformation() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [ plant ] = useFetch(`/plant/${id}`);
     
     const isLoading = plant?.data ? false : true;
@@ -67,9 +68,9 @@ function PlantInformation() {
                 <div className="relative z-10">
                     <div className="mb-6">
                         {/* Go back button handles returning to wherever they came from */}
-                        <LinkButton to=".." className="text-emerald-600 hover:text-emerald-800 font-medium flex items-center gap-2 transition-colors">
+                        <button onClick={() => navigate(-1)} className="text-emerald-600 hover:text-emerald-800 font-medium flex items-center gap-2 transition-colors">
                             &larr; Back
-                        </LinkButton>
+                        </button>
                     </div>
 
                     { isLoading ? (
